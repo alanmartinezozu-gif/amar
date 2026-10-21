@@ -160,11 +160,14 @@ describe("XWatcher", () => {
     ]);
   });
 
-  it("caps keyword searches per day, never tracked accounts, and resumes the next UTC day", async () => {
+  it("spreads the keyword allowance across the UTC day, never capping tracked accounts", async () => {
     const limits: number[] = [];
-    const { api, state, watcher, advance } = setup({ keywords: ["pump"], keywordPostsPerDay: 150, onKeywordLimit: (n) => void limits.push(n) });
+    const { api, state, watcher, advance } = setup({ keywords: ["pump"], keywordPostsPerDay: 200, onKeywordLimit: (n) => void limits.push(n) });
     const keywordCalls = () => api.calls.filter((c) => c.query.startsWith("pump"));
+    const accountCalls = () => api.calls.filter((c) => c.query.startsWith("from:"));
+    const HOUR = 60 * 60_000;
 
+    // Noon UTC: half the day has passed, so up to half the allowance (100) may be read.
     api.responses.push({ posts: [] }, { posts: plainPosts(100), newestId: "a" });
     await watcher.pollOnce();
     expect(api.calls.map((c) => [c.query, c.opts.maxPosts])).toEqual([
@@ -173,20 +176,36 @@ describe("XWatcher", () => {
     ]);
     expect(state.keywordReads("2026-10-21")).toBe(100);
 
-    api.responses.push({ posts: [] }, { posts: plainPosts(50), newestId: "b" });
+    // Same minute: nothing has built up, so only the tracked accounts are checked.
     await watcher.pollOnce();
-    expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(50);
+    expect(keywordCalls()).toHaveLength(1);
+    expect(accountCalls()).toHaveLength(2);
 
+    // 15:00: 125 allowed so far, 25 left.
+    advance(3 * HOUR);
+    api.responses.push({ posts: [] }, { posts: plainPosts(25), newestId: "b" });
     await watcher.pollOnce();
-    await watcher.pollOnce();
-    expect(keywordCalls()).toHaveLength(2);
-    expect(api.calls).toHaveLength(6); // tracked accounts kept going
-    expect(limits).toEqual([150]);
+    expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(25);
 
-    advance(24 * 60 * 60_000);
+    // 23:59: the rest of the day's 200.
+    advance(8 * HOUR + 59 * 60_000);
+    api.responses.push({ posts: [] }, { posts: plainPosts(75), newestId: "c" });
+    await watcher.pollOnce();
+    expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(75);
+    expect(state.keywordReads("2026-10-21")).toBe(200);
+
+    // All used: one notice, no more keyword reads today.
+    await watcher.pollOnce();
     await watcher.pollOnce();
     expect(keywordCalls()).toHaveLength(3);
+    expect(limits).toEqual([200]);
+
+    // A new UTC day starts from zero.
+    advance(24 * HOUR);
+    await watcher.pollOnce();
+    expect(keywordCalls()).toHaveLength(4);
     expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(100);
+    expect(accountCalls()).toHaveLength(7); // every check, capped or not
   });
 
   it("reads keyword searches one page at a time even without a daily cap", async () => {

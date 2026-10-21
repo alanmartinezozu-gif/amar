@@ -73,14 +73,20 @@ describe("files", () => {
     const state = await StateStore.open(path, undefined, 2);
     state.addSource(addr(1), "launch", 1);
     state.addSource(addr(2), "x:a", 2);
-    state.addSource(addr(3), "x:b", 3);
+    state.addSource(addr(3), "launch", 3, { name: "Space Cat", symbol: "SCAT" });
+    state.addSource(addr(3), "x:b", 4, { symbol: "OTHER" });
     state.setSinceId("q", "42");
+    state.addKeywordReads("2026-10-21", 120);
     await state.flush();
 
     const reopened = await StateStore.open(path);
     expect(reopened.isAlerted(addr(1))).toBe(false);
-    expect(reopened.sources(addr(3))).toEqual(["x:b"]);
+    expect(reopened.sources(addr(3))).toEqual(["launch", "x:b"]);
+    expect(reopened.names(addr(3))).toEqual({ name: "Space Cat", symbol: "SCAT" });
     expect(reopened.sinceId("q")).toBe("42");
+    // The X keyword allowance must not reset when the bot restarts.
+    expect(reopened.keywordReads("2026-10-21")).toBe(120);
+    expect(reopened.keywordReads("2026-10-22")).toBe(0);
   });
 });
 

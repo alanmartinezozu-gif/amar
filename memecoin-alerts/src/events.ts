@@ -8,7 +8,11 @@ import type { SafetyReport } from "./rpc.js";
  * the body of a signed webhook POST and as one line of data/alerts.jsonl.
  */
 export interface CoinAlert {
-  /** new_coin: first time we've seen it. mention: another tracked account posted it. update: follow-up. */
+  /**
+   * new_coin: first time we've seen it. update: follow-up.
+   * mention: a coin already alerted was posted on X, either the first X post from anyone or a
+   * later post from a tracked account. Check post.tracked before trusting it.
+   */
   type: "new_coin" | "mention" | "update";
   /** Unique per alert; use it to ignore duplicate deliveries. */
   id: string;

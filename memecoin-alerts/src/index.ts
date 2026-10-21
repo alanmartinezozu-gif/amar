@@ -54,7 +54,9 @@ if (config.X_BEARER_TOKEN) {
       onKeywordLimit: (limit) =>
         void notifier.send(
           `⏸️ X keyword searches read ${limit.toLocaleString("en-US")} posts today, the X_KEYWORD_POSTS_PER_DAY cap. ` +
-            "They pause until midnight UTC; your tracked accounts are still being watched.",
+            (config.X_ACCOUNTS.length > 0
+              ? "They pause until midnight UTC; your tracked accounts are still being watched."
+              : "X watching pauses until midnight UTC."),
         ),
     },
     log.child({ component: "x" }),

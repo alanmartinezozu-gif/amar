@@ -42,6 +42,14 @@ describe("loadConfig", () => {
     expect(message).toMatch(/X_ACCOUNTS: list at least one account/);
   });
 
+  it("keeps the X keyword cap on unless it's set to 0", () => {
+    expect(loadConfig({}).X_KEYWORD_POSTS_PER_DAY).toBe(1000);
+    expect(loadConfig({ X_KEYWORD_POSTS_PER_DAY: "" }).X_KEYWORD_POSTS_PER_DAY).toBe(1000);
+    expect(loadConfig({ X_KEYWORD_POSTS_PER_DAY: "0" }).X_KEYWORD_POSTS_PER_DAY).toBe(0);
+    expect(loadConfig({ X_KEYWORD_POSTS_PER_DAY: "250" }).X_KEYWORD_POSTS_PER_DAY).toBe(250);
+    expect(() => loadConfig({ X_KEYWORD_POSTS_PER_DAY: "5" })).toThrow(/X_KEYWORD_POSTS_PER_DAY: use 0 for no cap, or at least 10/);
+  });
+
   it("refuses to start with nothing to watch", () => {
     expect(() => loadConfig({ LAUNCH_ALERTS: "false" })).toThrow(/nothing to watch/);
   });

@@ -54,8 +54,16 @@ const EnvSchema = z
     X_POLL_SECONDS: z.coerce.number().int().min(15).default(60),
     /** Posts older than this are ignored (stops a restart from replaying old coins). */
     X_MAX_POST_AGE_MINUTES: z.coerce.number().positive().default(30),
-    /** Daily cap on posts read by X_KEYWORDS searches (X bills per post read). 0 = no cap. */
-    X_KEYWORD_POSTS_PER_DAY: z.coerce.number().int().min(0).default(1000),
+    /** Daily cap on posts read by X_KEYWORDS searches (X bills per post read). 0 = no cap. Blank = default. */
+    X_KEYWORD_POSTS_PER_DAY: z.preprocess(
+      (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
+      z.coerce
+        .number()
+        .int()
+        .min(0)
+        .refine((n) => n === 0 || n >= 10, "use 0 for no cap, or at least 10 (X returns posts 10 or more at a time)")
+        .default(1000),
+    ),
     /** X caps search query length; 512 on most plans. */
     X_QUERY_MAX_LENGTH: z.coerce.number().int().min(64).default(512),
     X_API_URL: z

@@ -161,15 +161,19 @@ export interface XWatcherOptions {
   maxPostAgeMs: number;
   /**
    * Keyword searches can match thousands of posts a day, and X bills per post read. They read at
-   * most one page (100 posts) per check and stop for the UTC day at this many. 0 = no cap.
+   * most one page (100 posts) per check, and at most this many per UTC day, spread evenly over the
+   * day so a busy search keeps working around the clock. 0 = no daily cap.
    * Searches of your tracked accounts are never capped: they're low volume and the most valuable.
    */
   keywordPostsPerDay: number;
-  /** Called once per UTC day when keyword searches hit the cap. */
+  /** Called once per UTC day when keyword searches use the whole day's allowance. */
   onKeywordLimit?: (limit: number) => void;
 }
 
 const KEYWORD_POSTS_PER_CHECK = 100;
+/** X returns at least this many posts per request, so smaller allowances wait to build up. */
+export const MIN_POSTS_PER_REQUEST = 10;
+const DAY_MS = 86_400_000;
 const utcDay = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
 /** Polls X for posts containing Solana contract addresses and hands each one to the alert hub. */
@@ -223,15 +227,19 @@ export class XWatcher {
     if (q.kind === "keywords") {
       maxPosts = KEYWORD_POSTS_PER_CHECK;
       if (cap > 0) {
-        const left = cap - this.state.keywordReads(today);
-        if (left <= 0) {
+        const used = this.state.keywordReads(today);
+        if (used >= cap) {
           if (this.limitNotifiedOn !== today) {
             this.limitNotifiedOn = today;
-            this.log.warn("X keyword searches reached today's cap", { cap });
+            this.log.warn("X keyword searches used today's whole allowance", { cap });
             this.opts.onKeywordLimit?.(cap);
           }
           return;
         }
+        // Pace the allowance: by noon UTC, at most half the day's posts may have been read.
+        const elapsed = (now - Date.parse(`${today}T00:00:00.000Z`)) / DAY_MS;
+        const left = Math.min(cap, Math.ceil(cap * elapsed)) - used;
+        if (left < MIN_POSTS_PER_REQUEST) return;
         maxPosts = Math.min(maxPosts, left);
       }
     }
