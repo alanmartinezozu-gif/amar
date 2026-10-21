@@ -1,6 +1,5 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { appendFile, mkdir } from "node:fs/promises";
-import { dirname } from "node:path";
+import { appendJsonLine } from "./jsonfile.js";
 import type { MarketSnapshot } from "./market.js";
 import type { SafetyReport } from "./rpc.js";
 
@@ -33,6 +32,11 @@ export interface CoinAlert {
     creator?: string;
     devBuySol?: number;
     marketCapSol?: number;
+    /** The coin's pump.fun bonding curve account: read it for the live price. */
+    bondingCurve?: string;
+    /** Curve reserves right after creation, in SOL and whole tokens. Price = vSolInCurve / vTokensInCurve. */
+    vSolInCurve?: number;
+    vTokensInCurve?: number;
     /** Why it matched your filters. */
     matched: string[];
   };
@@ -103,13 +107,9 @@ export class WebhookSink implements AlertSink {
 
 /** Appends each alert as one JSON line. Handy for backtesting a trading bot later. */
 export class JsonlSink implements AlertSink {
-  private ready?: Promise<unknown>;
-
   constructor(private readonly path: string) {}
 
-  async publish(alert: CoinAlert): Promise<void> {
-    this.ready ??= mkdir(dirname(this.path), { recursive: true });
-    await this.ready;
-    await appendFile(this.path, JSON.stringify(alert) + "\n");
+  publish(alert: CoinAlert): Promise<void> {
+    return appendJsonLine(this.path, alert);
   }
 }

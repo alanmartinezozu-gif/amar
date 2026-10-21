@@ -6,6 +6,7 @@ export const USDT_MINT = "Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB";
 export const SYSTEM_PROGRAM = "11111111111111111111111111111111";
 export const TOKEN_PROGRAM = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 export const TOKEN_2022_PROGRAM = "TokenzQdBNbLqP5VEhdkAS6EPFLC1PHnBqCXEpPxuEb";
+export const PUMP_PROGRAM = "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P";
 
 /** Coins every pair trades against: never a "new coin". */
 export const QUOTE_MINTS = new Set([SOL_MINT, USDC_MINT, USDT_MINT]);
@@ -16,7 +17,7 @@ const NOT_NEW_COINS = new Set([
   SYSTEM_PROGRAM,
   TOKEN_PROGRAM,
   TOKEN_2022_PROGRAM,
-  "6EF8rrecthR5Dkzon8Nwu78hRvfCKubJ14M5uBEwF6P", // pump.fun program
+  PUMP_PROGRAM,
   "JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4", // Jupiter aggregator
 ]);
 

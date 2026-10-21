@@ -27,8 +27,21 @@ describe("parseLaunchMessage", () => {
       name: " Moon Cat ",
       symbol: "MCAT",
       pool: "pump",
+      bondingCurveKey: addr(3),
+      vSolInBondingCurve: 31.5,
+      vTokensInBondingCurve: 1021891891.89,
     });
-    expect(parseLaunchMessage(raw)).toEqual({ mint, name: "Moon Cat", symbol: "MCAT", creator, devBuySol: 1.5, marketCapSol: 31.2 });
+    expect(parseLaunchMessage(raw)).toEqual({
+      mint,
+      name: "Moon Cat",
+      symbol: "MCAT",
+      creator,
+      devBuySol: 1.5,
+      marketCapSol: 31.2,
+      bondingCurve: addr(3),
+      vSolInCurve: 31.5,
+      vTokensInCurve: 1021891891.89,
+    });
   });
 
   it("skips acks, trades and junk", () => {

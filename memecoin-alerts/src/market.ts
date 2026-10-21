@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { QUOTE_MINTS } from "./solana.js";
+import { QUOTE_MINTS, SOL_MINT } from "./solana.js";
 
 export interface MarketSnapshot {
   pairUrl: string;
@@ -7,6 +7,8 @@ export interface MarketSnapshot {
   name?: string;
   symbol?: string;
   priceUsd?: number;
+  /** Price in SOL, when the pair trades against SOL. */
+  priceSol?: number;
   marketCapUsd?: number;
   liquidityUsd?: number;
   volume5mUsd?: number;
@@ -49,6 +51,7 @@ const Pair = z.object({
   baseToken: TokenRef,
   quoteToken: TokenRef.optional(),
   priceUsd: maybeNumber,
+  priceNative: maybeNumber,
   marketCap: maybeNumber,
   fdv: maybeNumber,
   liquidity: z.object({ usd: maybeNumber }).optional(),
@@ -65,6 +68,7 @@ function toSnapshot(p: Pair): MarketSnapshot {
     name: p.baseToken.name,
     symbol: p.baseToken.symbol,
     priceUsd: p.priceUsd,
+    priceSol: p.quoteToken?.address === SOL_MINT ? p.priceNative : undefined,
     marketCapUsd: p.marketCap ?? p.fdv,
     liquidityUsd: p.liquidity?.usd,
     volume5mUsd: p.volume?.m5,

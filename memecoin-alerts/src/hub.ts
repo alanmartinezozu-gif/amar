@@ -100,7 +100,15 @@ export class AlertHub implements PostHandler {
       at: new Date(clock()).toISOString(),
       name: ev.name,
       symbol: ev.symbol,
-      launch: { creator: ev.creator, devBuySol: ev.devBuySol, marketCapSol: ev.marketCapSol, matched },
+      launch: {
+        creator: ev.creator,
+        devBuySol: ev.devBuySol,
+        marketCapSol: ev.marketCapSol,
+        bondingCurve: ev.bondingCurve,
+        vSolInCurve: ev.vSolInCurve,
+        vTokensInCurve: ev.vTokensInCurve,
+        matched,
+      },
       safety,
     });
     this.deps.tracker?.track({ mint: ev.mint, source: "launch", name: ev.name, symbol: ev.symbol });

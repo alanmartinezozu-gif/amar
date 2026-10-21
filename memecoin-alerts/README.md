@@ -1,9 +1,13 @@
-# Meme coin alert bot
+# Meme coin alert bot + paper sniper
 
-Watches for new Solana meme coins and messages you about them. **It only alerts.** It has no
-wallet, holds no keys and never buys or sells anything.
+Two bots that work together. Neither has a wallet or keys, and neither can buy or sell anything.
 
-What you get, on Telegram and/or Discord:
+1. **Alert bot** (`npm start`): watches for new Solana meme coins and messages you about them.
+2. **Paper sniper** (`npm run paper`): receives the alert bot's alerts and practice-trades them
+   with pretend money, using Kimchi's documented style and live on-chain prices. See
+   [Paper sniper](#paper-sniper-practice-trading-kimchi-style) below.
+
+What the alert bot sends you, on Telegram and/or Discord:
 
 - **🆕 New coin posted on X:** a contract address (CA) posted by an account you track, or by
   anyone matching your keywords (those are marked unverified, since impersonators post fake CAs).
@@ -57,7 +61,7 @@ Safety:
 | A computer that stays on, or a small cloud server | Yes, it only alerts while running | A basic server is a few dollars a month |
 | [Node.js 22+](https://nodejs.org) | Yes | Free |
 | Telegram bot or Discord webhook | One of them (otherwise alerts only print to the screen) | Free |
-| Solana RPC URL (Helius, QuickNode, …) | Optional, turns on red-flag checks | Free tiers work |
+| Solana RPC URL (Helius, QuickNode, …) | Optional for alerts (turns on red-flag checks), required for the paper sniper | Free tiers work |
 | X API bearer token ([developer.x.com](https://developer.x.com)) | Optional, for X alerts | X charges per post read |
 
 pump.fun launch alerts and market data are free and need no key: they come from PumpPortal and
@@ -124,6 +128,87 @@ The alert format is the `CoinAlert` type in `src/events.ts`. The fields that mat
 | `safety.isToken` / `safety.error` | Whether the checks ran at all. No `safety` means checks are off |
 | `market` | DexScreener price, market cap, liquidity, volume. `null` = not trading yet |
 | `update.priceChangeSinceAlertPct` | For follow-ups: the move since the first price seen |
+| `launch.bondingCurve`, `launch.vSolInCurve`, `launch.vTokensInCurve` | The coin's pump.fun price account and its starting reserves (price = vSol ÷ vTokens) |
+
+The paper sniper (`src/paper/`) is a full worked example of a bot built on this feed.
+
+## Paper sniper: practice trading, Kimchi style
+
+The paper sniper answers one question before you risk money: **would sniping new launches the
+way Kimchi did actually make money right now?** The alert bot sends it each new coin. It decides
+like a sniper would, "fills" the trade at the coin's real price at that moment, manages the exit,
+and reports every trade and a running score to your Telegram:
+
+```
+📝 PAPER BUY $SCAT (Space Cat)
+0.50 SOL → 13.7M tokens · mcap 35.5 SOL · price already +11.4% since creation
+Paper balance: 4.50 SOL
+
+✅ PAPER SELL $SCAT: take profit
++59.7% (+0.30 SOL after fees) · held 4s
+Paper balance: 5.30 SOL
+
+📊 PAPER RESULTS (pretend money)
+Today: 14 trades · 5 won (36%) · -0.42 SOL
+Balance: 4.58 SOL (started with 5.00 SOL) · 2 open
+Skipped since last summary: 9 red flags, 3 too late, 2 already pumped
+```
+
+### The rules (all adjustable in `.env`)
+
+| Kimchi's pattern | Setting | Default |
+|---|---|---|
+| Bought within 0–2 minutes of a coin's creation | `PAPER_MAX_ENTRY_DELAY_SECONDS` | 120 |
+| Small bets on brand-new coins (his were 3–5 SOL) | `PAPER_BUY_SOL`, `PAPER_START_SOL` | 0.5, 5 |
+| Skip coins that already ran | `PAPER_MAX_ENTRY_MCAP_SOL` | 60 SOL (launch is ~32) |
+| His stated rule: take ~50% and get out the same day | `PAPER_TAKE_PROFIT_PCT`, `PAPER_MAX_HOLD_MINUTES` | 50, 30 |
+| His best trades rode much further (20–130x) | `PAPER_TAKE_PROFIT_SELL_PCT` below 100 sells only part at take profit and trails the rest by `PAPER_TRAILING_STOP_PCT` | 100 (sell all), 30 |
+| Losses on coins that dumped | `PAPER_STOP_LOSS_PCT` (his isn't known; this is a guess) | 35 |
+| Said he'd quit once he hit his target | `PAPER_DAILY_GOAL_SOL`, `PAPER_MAX_DAILY_LOSS_SOL` | off |
+| Which alerts to trade | `PAPER_SOURCES`: `launch` and/or `x` (tracked accounts only) | `launch` |
+
+**The coins it considers are the ones the alert bot sends**, so `LAUNCH_KEYWORDS`,
+`LAUNCH_CREATORS` and `LAUNCH_BIG_DEV_BUY_SOL` decide what gets sniped. With
+`PAPER_SKIP_RED_FLAGS=true` it also skips anything the safety checks flagged.
+
+Not included, on purpose: Kimchi's bundled launches, where many wallets secretly buy the same
+coin so it looks like real demand. That defrauds the people who buy after.
+
+### How realistic the paper fills are
+
+- **Price:** at the moment an alert arrives, the bot reads the coin's pump.fun price account
+  straight from the Solana chain. Every delay a real bot would have (alert, red-flag check,
+  network) is baked into the entry price; the buy message tells you how far the price had
+  already moved since creation.
+- **Size and fees:** fills use pump.fun's actual pricing formula, so bigger bets get worse
+  prices, as they would for real. Each buy and sell pays a 1.25% trading fee (`PAPER_FEE_PCT`)
+  plus 0.003 SOL for the transaction (`PAPER_TX_COST_SOL`, what fast bots pay to land quickly).
+- **After a coin graduates** from pump.fun to a regular pool, it switches to DexScreener's price
+  minus the fee and 3% slippage (`PAPER_DEX_SLIPPAGE_PCT`).
+
+What paper trading can't capture, all of which makes real results **worse** than paper:
+
+- **Failed and late transactions.** Real transactions fail or land late in busy moments,
+  especially sells during a crash.
+- **Competition.** Faster bots buy in the same second the coin is created, ahead of you.
+- **No real price impact.** Your pretend buys don't move the real price, so nobody reacts to them.
+
+Treat good paper results as "maybe", and bad ones as "definitely not".
+
+### Running it
+
+1. In `.env`, set `ALERT_WEBHOOK_URL=http://127.0.0.1:8787/alerts`, an `ALERT_WEBHOOK_SECRET`
+   (any long random string) and `SOLANA_RPC_URL` (needed for prices). Set some `LAUNCH_KEYWORDS`.
+2. Start both, in two terminals, sniper first:
+   ```bash
+   npm run paper
+   npm start
+   ```
+3. Let it run for days, not minutes. One lucky trade proves nothing; the summary's win rate and
+   total over hundreds of trades is the real answer.
+
+Files: `data/paper-state.json` is the pretend account (delete it to start over with
+`PAPER_START_SOL`), and `data/paper-trades.jsonl` logs every simulated buy and sell.
 
 ## Limits, plainly
 

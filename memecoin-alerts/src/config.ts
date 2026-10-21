@@ -1,17 +1,17 @@
 import { z } from "zod";
 import { isSolanaAddress } from "./solana.js";
 
-const bool = z
+export const bool = z
   .union([z.boolean(), z.string()])
   .transform((v) => (typeof v === "boolean" ? v : ["1", "true", "yes", "on"].includes(v.toLowerCase())));
 
-const optionalString = z
+export const optionalString = z
   .string()
   .optional()
   .transform((v) => (v && v.trim() !== "" ? v.trim() : undefined));
 
 /** "a, b ,c" -> ["a", "b", "c"]. Commas only, so keywords can contain spaces. */
-const csv = z
+export const csv = z
   .string()
   .optional()
   .transform((v) => [...new Set((v ?? "").split(",").map((s) => s.trim()).filter(Boolean))]);

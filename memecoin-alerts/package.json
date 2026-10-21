@@ -2,13 +2,14 @@
   "name": "memecoin-alerts",
   "version": "0.1.0",
   "private": true,
-  "description": "Alert-only Solana meme-coin bot: new contract addresses posted on X, new pump.fun launches, red-flag checks and follow-up price updates. It never trades.",
+  "description": "Two cooperating Solana meme-coin bots with no wallet: an alert bot (new coins on X and pump.fun, red-flag checks, follow-ups) and a paper sniper that practice-trades its alerts with pretend money.",
   "type": "module",
   "engines": {
     "node": ">=22"
   },
   "scripts": {
     "start": "tsx src/index.ts",
+    "paper": "tsx src/paper/index.ts",
     "example:receiver": "tsx examples/receiver.ts",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

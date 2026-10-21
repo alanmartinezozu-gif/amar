@@ -1,5 +1,4 @@
-import { mkdir, readFile, rename, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { readJsonFile, writeJsonAtomic } from "./jsonfile.js";
 
 interface CoinRecord {
   firstSeen: number;
@@ -25,15 +24,8 @@ export class StateStore {
   ) {}
 
   static async open(path: string, onSaveError?: (err: unknown) => void, maxCoins = 5000): Promise<StateStore> {
-    let data: StateFile = { sinceIds: {}, coins: {} };
-    try {
-      const parsed = JSON.parse(await readFile(path, "utf8")) as Partial<StateFile>;
-      data = { sinceIds: parsed.sinceIds ?? {}, coins: parsed.coins ?? {} };
-    } catch (err) {
-      if ((err as NodeJS.ErrnoException).code !== "ENOENT") {
-        throw new Error(`Couldn't read ${path} (${(err as Error).message}). Delete it to start fresh.`);
-      }
-    }
+    const saved = await readJsonFile<Partial<StateFile>>(path);
+    const data: StateFile = { sinceIds: saved?.sinceIds ?? {}, coins: saved?.coins ?? {} };
     return new StateStore(path, data, maxCoins, onSaveError);
   }
 
@@ -95,12 +87,7 @@ export class StateStore {
   private save(): Promise<void> {
     const path = this.path;
     if (!path) return Promise.resolve();
-    // Write to a temp file and rename, so a crash mid-write can't corrupt the state.
-    this.saving = this.saving.catch(() => {}).then(async () => {
-      await mkdir(dirname(path), { recursive: true });
-      await writeFile(`${path}.tmp`, JSON.stringify(this.data));
-      await rename(`${path}.tmp`, path);
-    });
+    this.saving = this.saving.catch(() => {}).then(() => writeJsonAtomic(path, this.data));
     return this.saving;
   }
 }

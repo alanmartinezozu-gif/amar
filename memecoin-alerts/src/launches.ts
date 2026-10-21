@@ -12,6 +12,10 @@ export interface LaunchEvent {
   /** SOL the creator spent buying their own coin at launch. */
   devBuySol?: number;
   marketCapSol?: number;
+  /** Bonding curve account and its reserves right after creation (SOL, whole tokens). */
+  bondingCurve?: string;
+  vSolInCurve?: number;
+  vTokensInCurve?: number;
 }
 
 const finite = z.number().finite().optional().catch(undefined);
@@ -26,6 +30,9 @@ const CreateMessage = z.object({
   traderPublicKey: text,
   solAmount: finite,
   marketCapSol: finite,
+  bondingCurveKey: text,
+  vSolInBondingCurve: finite,
+  vTokensInBondingCurve: finite,
 });
 
 /** Returns null for subscription acks, non-create messages and anything malformed. */
@@ -47,6 +54,9 @@ export function parseLaunchMessage(raw: string): LaunchEvent | null {
     creator: m.traderPublicKey && isSolanaAddress(m.traderPublicKey) ? m.traderPublicKey : undefined,
     devBuySol: m.solAmount,
     marketCapSol: m.marketCapSol,
+    bondingCurve: m.bondingCurveKey && isSolanaAddress(m.bondingCurveKey) ? m.bondingCurveKey : undefined,
+    vSolInCurve: m.vSolInBondingCurve,
+    vTokensInCurve: m.vTokensInBondingCurve,
   };
 }
 
