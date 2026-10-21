@@ -1,0 +1,29 @@
+{
+  "name": "memecoin-alerts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Alert-only Solana meme-coin bot: new contract addresses posted on X, new pump.fun launches, red-flag checks and follow-up price updates. It never trades.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "example:receiver": "tsx examples/receiver.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "bs58": "^6.0.0",
+    "dotenv": "^18.0.8",
+    "tsx": "^4.23.15",
+    "ws": "^8.22.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "@types/ws": "^8.18.2",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.12"
+  }
+}
