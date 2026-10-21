@@ -54,6 +54,8 @@ const SearchResponse = z.object({
 });
 
 const MAX_PAGES = 3;
+/** X returns between 10 and 100 posts per request. */
+export const MIN_POSTS_PER_REQUEST = 10;
 
 /** X API v2 recent search with an app bearer token. */
 export class HttpXApi implements XApi {
@@ -68,11 +70,12 @@ export class HttpXApi implements XApi {
     const maxPosts = opts.maxPosts ?? Infinity;
     let newestId: string | undefined;
     let nextToken: string | undefined;
-    for (let page = 0; page < MAX_PAGES && posts.length < maxPosts; page++) {
+    // Stop before a request whose 10-post minimum would read past maxPosts.
+    for (let page = 0; page < MAX_PAGES && maxPosts - posts.length >= MIN_POSTS_PER_REQUEST; page++) {
       const params = new URLSearchParams({
         query,
         // X accepts 10-100 per request.
-        max_results: String(Math.min(100, Math.max(10, maxPosts - posts.length))),
+        max_results: String(Math.min(100, maxPosts - posts.length)),
         "tweet.fields": "created_at,author_id,entities,note_tweet",
         expansions: "author_id",
         "user.fields": "username",
@@ -160,9 +163,10 @@ export interface XWatcherOptions {
   maxQueryLength: number;
   maxPostAgeMs: number;
   /**
-   * Keyword searches can match thousands of posts a day, and X bills per post read. They read at
-   * most one page (100 posts) per check, and at most this many per UTC day, spread evenly over the
-   * day so a busy search keeps working around the clock. 0 = no daily cap.
+   * Keyword searches can match thousands of posts a day, and X bills per post read. Each keyword
+   * search reads at most 100 posts per check, and together they read at most this many per UTC day,
+   * spread evenly over the day and shared fairly between them, so busy searches keep working around
+   * the clock. 0 = no daily cap.
    * Searches of your tracked accounts are never capped: they're low volume and the most valuable.
    */
   keywordPostsPerDay: number;
@@ -171,8 +175,6 @@ export interface XWatcherOptions {
 }
 
 const KEYWORD_POSTS_PER_CHECK = 100;
-/** X returns at least this many posts per request, so smaller allowances wait to build up. */
-export const MIN_POSTS_PER_REQUEST = 10;
 const DAY_MS = 86_400_000;
 const utcDay = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
@@ -210,40 +212,49 @@ export class XWatcher {
     if (this.polling) return;
     this.polling = true;
     try {
+      const keywordShare = this.keywordShare();
       for (const q of this.queries) {
         if (this.clock() < this.pausedUntil) return;
-        await this.runQuery(q);
+        if (q.kind === "keywords" && keywordShare === 0) continue;
+        await this.runQuery(q, q.kind === "keywords" ? keywordShare : undefined);
       }
     } finally {
       this.polling = false;
     }
   }
 
-  private async runQuery(q: XQuery): Promise<void> {
+  /**
+   * Posts each keyword search may read this check, or 0 to skip them all. The day's allowance is
+   * paced (by noon UTC at most half may be read) and split evenly, so a busy search can't starve
+   * the others; until every search's share reaches X's 10-post minimum, they all wait.
+   */
+  private keywordShare(): number {
+    const searches = this.queries.filter((q) => q.kind === "keywords").length;
+    const cap = this.opts.keywordPostsPerDay;
+    if (searches === 0) return 0;
+    if (cap === 0) return KEYWORD_POSTS_PER_CHECK;
     const now = this.clock();
     const today = utcDay(now);
-    const { keywordPostsPerDay: cap, maxPostAgeMs } = this.opts;
-    let maxPosts: number | undefined;
-    if (q.kind === "keywords") {
-      maxPosts = KEYWORD_POSTS_PER_CHECK;
-      if (cap > 0) {
-        const used = this.state.keywordReads(today);
-        if (used >= cap) {
-          if (this.limitNotifiedOn !== today) {
-            this.limitNotifiedOn = today;
-            this.log.warn("X keyword searches used today's whole allowance", { cap });
-            this.opts.onKeywordLimit?.(cap);
-          }
-          return;
-        }
-        // Pace the allowance: by noon UTC, at most half the day's posts may have been read.
-        const elapsed = (now - Date.parse(`${today}T00:00:00.000Z`)) / DAY_MS;
-        const left = Math.min(cap, Math.ceil(cap * elapsed)) - used;
-        if (left < MIN_POSTS_PER_REQUEST) return;
-        maxPosts = Math.min(maxPosts, left);
+    const used = this.state.keywordReads(today);
+    if (used >= cap) {
+      if (this.limitNotifiedOn !== today) {
+        this.limitNotifiedOn = today;
+        this.log.warn("X keyword searches used today's whole allowance", { cap });
+        this.opts.onKeywordLimit?.(cap);
       }
+      return 0;
     }
+    const elapsed = (now - Date.parse(`${today}T00:00:00.000Z`)) / DAY_MS;
+    const left = Math.min(cap, Math.ceil(cap * elapsed)) - used;
+    const share = Math.min(KEYWORD_POSTS_PER_CHECK, Math.floor(left / searches));
+    return share >= MIN_POSTS_PER_REQUEST ? share : 0;
+  }
 
+  /** `maxPosts` is set for keyword searches only; tracked accounts read everything new. */
+  private async runQuery(q: XQuery, maxPosts: number | undefined): Promise<void> {
+    const now = this.clock();
+    const today = utcDay(now);
+    const { maxPostAgeMs } = this.opts;
     const sinceId = this.state.sinceId(q.query);
     let result: XSearchResult;
     try {

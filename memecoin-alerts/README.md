@@ -91,12 +91,13 @@ is your `TELEGRAM_CHAT_ID`.
 - **Launch alerts are off until you set a filter.** Hundreds of coins launch every hour, so
   set `LAUNCH_KEYWORDS` (for example `cat,trump,ai`), `LAUNCH_CREATORS` and/or
   `LAUNCH_BIG_DEV_BUY_SOL`. Without filters you get only the summaries.
-- **X costs money per post read.** `X_ACCOUNTS` with a handful of accounts is cheap. Broad
-  `X_KEYWORDS` can match thousands of posts, so each check reads at most 100. They also read at
-  most `X_KEYWORD_POSTS_PER_DAY` per UTC day (default 1,000), spread evenly so keyword watching
-  works around the clock instead of running out after midnight. Your tracked accounts are never
-  capped. Raising `X_POLL_SECONDS` lowers the cost but makes alerts slower. Also set a spending
-  limit in the X developer console.
+- **X costs money per post read.** `X_ACCOUNTS` with a handful of accounts is cheap, and never
+  capped. Broad `X_KEYWORDS` can match thousands of posts, so all keyword searches together read
+  at most `X_KEYWORD_POSTS_PER_DAY` per UTC day (default 1,000), spread evenly across the day and
+  shared fairly between searches, with at most 100 per search per check. **That setting is what
+  sets your keyword bill:** lower it to spend less. `X_POLL_SECONDS` only changes how quickly
+  alerts arrive, unless you turn the cap off (`0`), when checking less often does read less.
+  Also set a spending limit in the X developer console.
 - **Too many follow-ups?** Set `FOLLOWUP_MINUTES=15` for one update, or leave it empty for none.
 
 ## Watching X and pump.fun together

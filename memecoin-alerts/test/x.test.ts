@@ -85,6 +85,23 @@ describe("HttpXApi", () => {
     expect((err as XRateLimitError).resetAt).toBe(1_800_000_000_000);
   });
 
+  it("never reads past maxPosts, even when X returns short pages", async () => {
+    let call = 0;
+    const page = (n: number) => json({ data: Array.from({ length: n }, (_, i) => ({ id: `${call}-${i}`, text: "t" })), meta: { next_token: "more" } });
+    const { fetch, requests } = fakeFetch(() => page(++call === 1 ? 9 : 15));
+    const api = new HttpXApi("t", "https://api.x.test/2", fetch);
+
+    // 6 left after a short page of 9: X's 10-post minimum would overshoot, so it stops.
+    expect((await api.searchRecent("q", { maxPosts: 15 })).posts).toHaveLength(9);
+    expect(requests).toHaveLength(1);
+
+    call = 0;
+    requests.length = 0;
+    const result = await api.searchRecent("q", { maxPosts: 30 });
+    expect(requests.map((r) => new URL(r.url).searchParams.get("max_results"))).toEqual(["30", "21"]);
+    expect(result.posts.length).toBeLessThanOrEqual(30);
+  });
+
   it("asks for no more than maxPosts and stops paging there", async () => {
     const { fetch, requests } = fakeFetch(() =>
       json({ data: Array.from({ length: 25 }, (_, i) => ({ id: String(i), text: "t" })), meta: { newest_id: "24", next_token: "more" } }),
@@ -206,6 +223,42 @@ describe("XWatcher", () => {
     expect(keywordCalls()).toHaveLength(4);
     expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(100);
     expect(accountCalls()).toHaveLength(7); // every check, capped or not
+  });
+
+  it("shares the allowance fairly between keyword searches, waiting until each gets X's 10-post minimum", async () => {
+    // A short query limit splits these two keywords into two searches.
+    const { api, watcher, advance } = setup({ accounts: [], keywords: ["aaaaaaaaaa", "bbbbbbbbbb"], maxQueryLength: 30, keywordPostsPerDay: 200 });
+    expect(watcher.queries.map((q) => q.query)).toEqual(["aaaaaaaaaa -is:retweet", "bbbbbbbbbb -is:retweet"]);
+    const busy = (n: number) => ({ posts: plainPosts(n), newestId: String(n) });
+
+    // Noon: 100 available, 50 each.
+    api.responses.push(busy(50), busy(50));
+    await watcher.pollOnce();
+    expect(api.calls.map((c) => c.opts.maxPosts)).toEqual([50, 50]);
+
+    // 13:48: 15 available is 7 each, under X's minimum, so both wait (neither grabs it all).
+    advance(108 * 60_000);
+    await watcher.pollOnce();
+    expect(api.calls).toHaveLength(2);
+
+    // 14:24: 20 available is exactly 10 each.
+    advance(36 * 60_000);
+    api.responses.push(busy(10), busy(10));
+    await watcher.pollOnce();
+    expect(api.calls.slice(2).map((c) => [c.query, c.opts.maxPosts])).toEqual([
+      ["aaaaaaaaaa -is:retweet", 10],
+      ["bbbbbbbbbb -is:retweet", 10],
+    ]);
+  });
+
+  it("starts each UTC day slowly instead of spending the allowance right after midnight", async () => {
+    const { api, watcher, advance } = setup({ accounts: [], keywords: ["pump"], keywordPostsPerDay: 1000 });
+    advance(12 * 60 * 60_000 + 5 * 60_000); // 00:05 the next day: 4 posts allowed so far
+    await watcher.pollOnce();
+    expect(api.calls).toHaveLength(0);
+    advance(10 * 60_000); // 00:15: 11 allowed
+    await watcher.pollOnce();
+    expect(api.calls.map((c) => c.opts.maxPosts)).toEqual([11]);
   });
 
   it("reads keyword searches one page at a time even without a daily cap", async () => {
