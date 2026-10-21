@@ -76,8 +76,10 @@ export function formatAlert(alert: CoinAlert, now: number): string {
   }
 
   if (alert.type === "mention" && alert.post) {
+    const who = alert.post.tracked ? "an account you track" : "not an account you track";
+    const count = alert.mentions && alert.mentions > 1 ? ` · ${alert.mentions} X accounts have posted it` : "";
     push(
-      `🔁 ${title(alert)} also posted by @${alert.post.author}` + (alert.mentions ? ` (${alert.mentions} tracked accounts so far)` : ""),
+      `🔁 ${title(alert)} posted on X by @${alert.post.author} (${who})${count}`,
       `CA: ${alert.mint}`,
       quote(alert.post.text),
       alert.post.url,

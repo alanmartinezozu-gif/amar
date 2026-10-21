@@ -54,6 +54,8 @@ const EnvSchema = z
     X_POLL_SECONDS: z.coerce.number().int().min(15).default(60),
     /** Posts older than this are ignored (stops a restart from replaying old coins). */
     X_MAX_POST_AGE_MINUTES: z.coerce.number().positive().default(30),
+    /** Daily cap on posts read by X_KEYWORDS searches (X bills per post read). 0 = no cap. */
+    X_KEYWORD_POSTS_PER_DAY: z.coerce.number().int().min(0).default(1000),
     /** X caps search query length; 512 on most plans. */
     X_QUERY_MAX_LENGTH: z.coerce.number().int().min(64).default(512),
     X_API_URL: z

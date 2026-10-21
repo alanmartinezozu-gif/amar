@@ -51,17 +51,24 @@ export class AlertHub implements PostHandler {
     // No awaits between the check and the write, so two posts of one coin can't both be "new".
     if (state.hasSource(coin.mint, source)) return;
     const isNew = !state.isAlerted(coin.mint);
-    state.addSource(coin.mint, source, clock());
-    if (!isNew && !tracked) return; // Repeat mentions only matter from accounts you trust.
+    const firstOnX = !state.sources(coin.mint).some((s) => s.startsWith("x:"));
+    state.addSource(coin.mint, source, clock(), coin);
+    // After the first X post, more mentions only matter from accounts you trust. The first one always
+    // does: it's how you hear that a launch you were alerted on is being talked about.
+    if (!isNew && !tracked && !firstOnX) return;
 
+    // A launch is usually posted before DexScreener lists it, so fall back to the name seen at launch.
+    const known = state.names(coin.mint);
+    const name = coin.name ?? known.name;
+    const symbol = coin.symbol ?? known.symbol;
     const alert: CoinAlert = {
       type: isNew ? "new_coin" : "mention",
       id: `x:${post.id}:${coin.mint}`,
       mint: coin.mint,
       source: "x",
       at: new Date(clock()).toISOString(),
-      name: coin.name,
-      symbol: coin.symbol,
+      name,
+      symbol,
       post: {
         author,
         tracked,
@@ -75,14 +82,14 @@ export class AlertHub implements PostHandler {
     };
     await this.publish(alert);
     if (isNew) {
-      this.deps.tracker?.track({ mint: coin.mint, source: "x", name: coin.name, symbol: coin.symbol, priceUsd: coin.market?.priceUsd });
+      this.deps.tracker?.track({ mint: coin.mint, source: "x", name, symbol, priceUsd: coin.market?.priceUsd });
     }
   }
 
   async handleLaunch(ev: LaunchEvent, matched: string[]): Promise<void> {
     const { state, clock, rpc } = this.deps;
     if (state.isAlerted(ev.mint)) return;
-    state.addSource(ev.mint, "launch", clock());
+    state.addSource(ev.mint, "launch", clock(), ev);
 
     let safety: SafetyReport | undefined;
     if (rpc) {

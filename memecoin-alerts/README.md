@@ -11,8 +11,9 @@ What the alert bot sends you, on Telegram and/or Discord:
 
 - **🆕 New coin posted on X:** a contract address (CA) posted by an account you track, or by
   anyone matching your keywords (those are marked unverified, since impersonators post fake CAs).
-- **🔁 Mention:** another tracked account posted the same coin. Several accounts posting one coin
-  is a signal worth knowing about.
+- **🔁 Mention:** a coin you were already alerted on was posted on X. You hear about the first X
+  post from anyone, so you know a pump.fun launch is being talked about, and then about every
+  tracked account that posts it. Several accounts posting one coin is a signal worth knowing about.
 - **🚀 New launch on pump.fun:** coins being created right now that match your filters: a word in
   the name, a creator wallet you follow, or a creator who bought a lot of their own coin.
 - **🧾 Launch summary:** every 15 minutes, how many coins launched and which creators bought the
@@ -91,8 +92,31 @@ is your `TELEGRAM_CHAT_ID`.
   set `LAUNCH_KEYWORDS` (for example `cat,trump,ai`), `LAUNCH_CREATORS` and/or
   `LAUNCH_BIG_DEV_BUY_SOL`. Without filters you get only the summaries.
 - **X costs money per post read.** `X_ACCOUNTS` with a handful of accounts is cheap. Broad
-  `X_KEYWORDS` like `pump.fun` read a lot of posts. Raising `X_POLL_SECONDS` lowers the cost
-  but makes alerts slower.
+  `X_KEYWORDS` read a lot of posts, so each check reads at most 100 of them and they stop for
+  the UTC day at `X_KEYWORD_POSTS_PER_DAY` (default 1,000). Your tracked accounts keep being
+  watched after that. Raising `X_POLL_SECONDS` lowers the cost but makes alerts slower. Also set
+  a spending limit in the X developer console.
+
+## Watching X and pump.fun together
+
+One bot (`npm start`) watches both:
+
+- **pump.fun:** every coin as it's created, alerting on the ones that match your `LAUNCH_*`
+  filters.
+- **X:** every `X_POLL_SECONDS`, posts that contain a contract address, from:
+  - **`X_ACCOUNTS`:** accounts you trust to announce new coins (callers, traders you follow).
+    These are the most valuable and are never capped.
+  - **`X_KEYWORDS`:** searches for coins announced by anyone. `url:"pump.fun"` catches every post
+    linking to a pump.fun coin. It's very busy, so it's capped by `X_KEYWORD_POSTS_PER_DAY`, and
+    those posts are marked unverified.
+
+When a launch you were alerted on gets posted on X, you get a 🔁 alert. Coins announced on X
+that you hadn't seen yet arrive as 🆕 alerts. The paper sniper can trade them too, from tracked
+accounts only: set `PAPER_SOURCES=launch,x`.
+
+To turn on X: sign up at [developer.x.com](https://developer.x.com), create an app, and copy its
+**Bearer Token** into `X_BEARER_TOKEN`. X bills per post read, so add credit and set a spending
+limit there.
 - **Too many follow-ups?** Set `FOLLOWUP_MINUTES=15` for one update, or leave it empty for none.
 
 ## Building your trading bot on top of it

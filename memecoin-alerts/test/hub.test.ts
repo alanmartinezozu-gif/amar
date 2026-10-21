@@ -77,6 +77,24 @@ describe("AlertHub.handlePost", () => {
     expect(tracked).toHaveLength(1);
   });
 
+  it("tells you the first time a launch you were alerted on shows up on X, from anyone", async () => {
+    const { rpc, sink, notifier, hub } = setup();
+    const mint = addr(15);
+    rpc.addMint(mint);
+    await hub.handleLaunch({ mint, symbol: "SCAT" }, ['"cat"']);
+    await hub.handlePost({ mint, post: post("70", "rando"), tracked: false });
+    await hub.handlePost({ mint, post: post("71", "another_rando"), tracked: false });
+    await hub.handlePost({ mint, post: post("72", "kimchi1x"), tracked: true });
+
+    expect(sink.alerts.map((a) => [a.type, a.post?.author, a.mentions])).toEqual([
+      ["new_coin", undefined, undefined],
+      ["mention", "rando", 1],
+      ["mention", "kimchi1x", 3],
+    ]);
+    expect(notifier.messages[1]).toMatch(/^🔁 \$SCAT posted on X by @rando \(not an account you track\)\nCA: /);
+    expect(notifier.messages[2]).toMatch(/^🔁 \$SCAT posted on X by @kimchi1x \(an account you track\) · 3 X accounts have posted it/);
+  });
+
   it("swaps a DexScreener pair address for the coin it trades", async () => {
     const { rpc, market, sink, hub } = setup();
     const pair = addr(3);

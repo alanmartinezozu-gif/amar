@@ -4,11 +4,20 @@ interface CoinRecord {
   firstSeen: number;
   /** "launch" or "x:<handle>". */
   sources: string[];
+  name?: string;
+  symbol?: string;
+}
+
+export interface CoinNames {
+  name?: string;
+  symbol?: string;
 }
 
 interface StateFile {
   sinceIds: Record<string, string>;
   coins: Record<string, CoinRecord>;
+  /** Posts read by X keyword searches on one UTC day, for the daily cap. */
+  keywordReads?: { date: string; count: number };
 }
 
 /** What the bot has already alerted on, so restarts don't repeat alerts. Saved to a JSON file. */
@@ -25,7 +34,7 @@ export class StateStore {
 
   static async open(path: string, onSaveError?: (err: unknown) => void, maxCoins = 5000): Promise<StateStore> {
     const saved = await readJsonFile<Partial<StateFile>>(path);
-    const data: StateFile = { sinceIds: saved?.sinceIds ?? {}, coins: saved?.coins ?? {} };
+    const data: StateFile = { sinceIds: saved?.sinceIds ?? {}, coins: saved?.coins ?? {}, keywordReads: saved?.keywordReads };
     return new StateStore(path, data, maxCoins, onSaveError);
   }
 
@@ -43,6 +52,16 @@ export class StateStore {
     this.scheduleSave();
   }
 
+  /** Posts keyword searches have read on `date` (YYYY-MM-DD, UTC). */
+  keywordReads(date: string): number {
+    return this.data.keywordReads?.date === date ? this.data.keywordReads.count : 0;
+  }
+
+  addKeywordReads(date: string, count: number): void {
+    this.data.keywordReads = { date, count: this.keywordReads(date) + count };
+    this.scheduleSave();
+  }
+
   isAlerted(mint: string): boolean {
     return mint in this.data.coins;
   }
@@ -55,9 +74,17 @@ export class StateStore {
     return this.sources(mint).includes(source);
   }
 
-  addSource(mint: string, source: string, now: number): void {
+  /** Name and ticker from the first alert that knew them. */
+  names(mint: string): CoinNames {
+    const record = this.data.coins[mint];
+    return { name: record?.name, symbol: record?.symbol };
+  }
+
+  addSource(mint: string, source: string, now: number, names: CoinNames = {}): void {
     const record = (this.data.coins[mint] ??= { firstSeen: now, sources: [] });
     if (!record.sources.includes(source)) record.sources.push(source);
+    record.name ??= names.name;
+    record.symbol ??= names.symbol;
     this.prune();
     this.scheduleSave();
   }

@@ -1,7 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { silentLogger } from "../src/logger.js";
 import { StateStore } from "../src/state.js";
-import { HttpXApi, XRateLimitError, XWatcher, buildQueries, type PostMention, type XApi, type XSearchResult } from "../src/x.js";
+import {
+  HttpXApi,
+  XRateLimitError,
+  XWatcher,
+  buildQueries,
+  type PostMention,
+  type SearchOptions,
+  type XApi,
+  type XPost,
+  type XSearchResult,
+  type XWatcherOptions,
+} from "../src/x.js";
 import { addr, fakeFetch, json } from "./helpers.js";
 
 describe("buildQueries", () => {
@@ -73,13 +84,23 @@ describe("HttpXApi", () => {
     expect(err).toBeInstanceOf(XRateLimitError);
     expect((err as XRateLimitError).resetAt).toBe(1_800_000_000_000);
   });
+
+  it("asks for no more than maxPosts and stops paging there", async () => {
+    const { fetch, requests } = fakeFetch(() =>
+      json({ data: Array.from({ length: 25 }, (_, i) => ({ id: String(i), text: "t" })), meta: { newest_id: "24", next_token: "more" } }),
+    );
+    const result = await new HttpXApi("t", "https://api.x.test/2", fetch).searchRecent("q", { maxPosts: 25 });
+    expect(requests).toHaveLength(1);
+    expect(new URL(requests[0].url).searchParams.get("max_results")).toBe("25");
+    expect(result.posts).toHaveLength(25);
+  });
 });
 
 class FakeXApi implements XApi {
-  calls: Array<{ query: string; opts: { sinceId?: string; startTime?: string } }> = [];
+  calls: Array<{ query: string; opts: SearchOptions }> = [];
   responses: Array<XSearchResult | Error> = [];
 
-  async searchRecent(query: string, opts: { sinceId?: string; startTime?: string }): Promise<XSearchResult> {
+  async searchRecent(query: string, opts: SearchOptions): Promise<XSearchResult> {
     this.calls.push({ query, opts });
     const next = this.responses.shift() ?? { posts: [] };
     if (next instanceof Error) throw next;
@@ -91,7 +112,8 @@ describe("XWatcher", () => {
   const NOW = Date.parse("2026-10-21T12:00:00.000Z");
   const minutesAgo = (m: number) => new Date(NOW - m * 60_000).toISOString();
 
-  function setup() {
+  function setup(opts: Partial<XWatcherOptions> = {}) {
+    let now = NOW;
     const api = new FakeXApi();
     const seen: PostMention[] = [];
     const state = StateStore.memory();
@@ -99,12 +121,15 @@ describe("XWatcher", () => {
       api,
       { handlePost: async (m) => void seen.push(m) },
       state,
-      { accounts: ["kimchi1x"], keywords: [], maxQueryLength: 512, maxPostAgeMs: 30 * 60_000 },
+      { accounts: ["kimchi1x"], keywords: [], maxQueryLength: 512, maxPostAgeMs: 30 * 60_000, keywordPostsPerDay: 0, ...opts },
       silentLogger,
-      () => NOW,
+      () => now,
     );
-    return { api, seen, state, watcher };
+    return { api, seen, state, watcher, advance: (ms: number) => (now += ms) };
   }
+
+  const plainPosts = (n: number): XPost[] =>
+    Array.from({ length: n }, (_, i) => ({ id: String(i), text: "gm", authorId: "u", createdAt: minutesAgo(1), urls: [] }));
 
   it("only looks back as far as it would alert on, then continues from the newest post", async () => {
     const { api, state, watcher } = setup();
@@ -133,6 +158,41 @@ describe("XWatcher", () => {
       [m2, true],
       [m3, false],
     ]);
+  });
+
+  it("caps keyword searches per day, never tracked accounts, and resumes the next UTC day", async () => {
+    const limits: number[] = [];
+    const { api, state, watcher, advance } = setup({ keywords: ["pump"], keywordPostsPerDay: 150, onKeywordLimit: (n) => void limits.push(n) });
+    const keywordCalls = () => api.calls.filter((c) => c.query.startsWith("pump"));
+
+    api.responses.push({ posts: [] }, { posts: plainPosts(100), newestId: "a" });
+    await watcher.pollOnce();
+    expect(api.calls.map((c) => [c.query, c.opts.maxPosts])).toEqual([
+      ["from:kimchi1x -is:retweet", undefined],
+      ["pump -is:retweet", 100],
+    ]);
+    expect(state.keywordReads("2026-10-21")).toBe(100);
+
+    api.responses.push({ posts: [] }, { posts: plainPosts(50), newestId: "b" });
+    await watcher.pollOnce();
+    expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(50);
+
+    await watcher.pollOnce();
+    await watcher.pollOnce();
+    expect(keywordCalls()).toHaveLength(2);
+    expect(api.calls).toHaveLength(6); // tracked accounts kept going
+    expect(limits).toEqual([150]);
+
+    advance(24 * 60 * 60_000);
+    await watcher.pollOnce();
+    expect(keywordCalls()).toHaveLength(3);
+    expect(keywordCalls().at(-1)?.opts.maxPosts).toBe(100);
+  });
+
+  it("reads keyword searches one page at a time even without a daily cap", async () => {
+    const { api, watcher } = setup({ accounts: [], keywords: ["pump"], keywordPostsPerDay: 0 });
+    await watcher.pollOnce();
+    expect(api.calls[0].opts.maxPosts).toBe(100);
   });
 
   it("pauses until X's reset time after a rate limit", async () => {

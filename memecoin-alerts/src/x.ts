@@ -19,8 +19,15 @@ export interface XSearchResult {
   newestId?: string;
 }
 
+export interface SearchOptions {
+  sinceId?: string;
+  startTime?: string;
+  /** Stop after about this many posts (X returns at least 10 per request). Each post read costs money. */
+  maxPosts?: number;
+}
+
 export interface XApi {
-  searchRecent(query: string, opts: { sinceId?: string; startTime?: string }): Promise<XSearchResult>;
+  searchRecent(query: string, opts: SearchOptions): Promise<XSearchResult>;
 }
 
 export class XRateLimitError extends Error {
@@ -56,14 +63,16 @@ export class HttpXApi implements XApi {
     private readonly fetchImpl: typeof fetch = fetch,
   ) {}
 
-  async searchRecent(query: string, opts: { sinceId?: string; startTime?: string }): Promise<XSearchResult> {
+  async searchRecent(query: string, opts: SearchOptions): Promise<XSearchResult> {
     const posts: XPost[] = [];
+    const maxPosts = opts.maxPosts ?? Infinity;
     let newestId: string | undefined;
     let nextToken: string | undefined;
-    for (let page = 0; page < MAX_PAGES; page++) {
+    for (let page = 0; page < MAX_PAGES && posts.length < maxPosts; page++) {
       const params = new URLSearchParams({
         query,
-        max_results: "100",
+        // X accepts 10-100 per request.
+        max_results: String(Math.min(100, Math.max(10, maxPosts - posts.length))),
         "tweet.fields": "created_at,author_id,entities,note_tweet",
         expansions: "author_id",
         "user.fields": "username",
@@ -150,28 +159,38 @@ export interface XWatcherOptions {
   keywords: string[];
   maxQueryLength: number;
   maxPostAgeMs: number;
+  /**
+   * Keyword searches can match thousands of posts a day, and X bills per post read. They read at
+   * most one page (100 posts) per check and stop for the UTC day at this many. 0 = no cap.
+   * Searches of your tracked accounts are never capped: they're low volume and the most valuable.
+   */
+  keywordPostsPerDay: number;
+  /** Called once per UTC day when keyword searches hit the cap. */
+  onKeywordLimit?: (limit: number) => void;
 }
+
+const KEYWORD_POSTS_PER_CHECK = 100;
+const utcDay = (ms: number) => new Date(ms).toISOString().slice(0, 10);
 
 /** Polls X for posts containing Solana contract addresses and hands each one to the alert hub. */
 export class XWatcher {
   readonly queries: XQuery[];
   private readonly tracked: Set<string>;
-  private readonly maxPostAgeMs: number;
   private pausedUntil = 0;
   private polling = false;
+  private limitNotifiedOn = "";
   private timer?: NodeJS.Timeout;
 
   constructor(
     private readonly api: XApi,
     private readonly handler: PostHandler,
     private readonly state: StateStore,
-    opts: XWatcherOptions,
+    private readonly opts: XWatcherOptions,
     private readonly log: Logger,
     private readonly clock: () => number = Date.now,
   ) {
     this.queries = buildQueries(opts.accounts, opts.keywords, opts.maxQueryLength);
     this.tracked = new Set(opts.accounts.map((a) => a.toLowerCase()));
-    this.maxPostAgeMs = opts.maxPostAgeMs;
   }
 
   start(intervalMs: number): void {
@@ -198,11 +217,31 @@ export class XWatcher {
 
   private async runQuery(q: XQuery): Promise<void> {
     const now = this.clock();
+    const today = utcDay(now);
+    const { keywordPostsPerDay: cap, maxPostAgeMs } = this.opts;
+    let maxPosts: number | undefined;
+    if (q.kind === "keywords") {
+      maxPosts = KEYWORD_POSTS_PER_CHECK;
+      if (cap > 0) {
+        const left = cap - this.state.keywordReads(today);
+        if (left <= 0) {
+          if (this.limitNotifiedOn !== today) {
+            this.limitNotifiedOn = today;
+            this.log.warn("X keyword searches reached today's cap", { cap });
+            this.opts.onKeywordLimit?.(cap);
+          }
+          return;
+        }
+        maxPosts = Math.min(maxPosts, left);
+      }
+    }
+
     const sinceId = this.state.sinceId(q.query);
     let result: XSearchResult;
     try {
       // First run for a query: only look back as far as we'd alert on, so we don't pay to read a week of posts.
-      result = await this.api.searchRecent(q.query, sinceId ? { sinceId } : { startTime: new Date(now - this.maxPostAgeMs).toISOString() });
+      const window = sinceId ? { sinceId } : { startTime: new Date(now - maxPostAgeMs).toISOString() };
+      result = await this.api.searchRecent(q.query, { ...window, maxPosts });
     } catch (err) {
       if (err instanceof XRateLimitError) {
         this.pausedUntil = err.resetAt;
@@ -213,9 +252,10 @@ export class XWatcher {
       return;
     }
     if (result.newestId) this.state.setSinceId(q.query, result.newestId);
+    if (q.kind === "keywords") this.state.addKeywordReads(today, result.posts.length);
 
     for (const post of [...result.posts].reverse()) {
-      if (post.createdAt && now - Date.parse(post.createdAt) > this.maxPostAgeMs) continue;
+      if (post.createdAt && now - Date.parse(post.createdAt) > maxPostAgeMs) continue;
       const tracked = post.authorUsername !== undefined && this.tracked.has(post.authorUsername.toLowerCase());
       for (const mint of extractMints([post.text, ...post.urls])) {
         try {

@@ -50,14 +50,21 @@ if (config.X_BEARER_TOKEN) {
       keywords: config.X_KEYWORDS,
       maxQueryLength: config.X_QUERY_MAX_LENGTH,
       maxPostAgeMs: config.X_MAX_POST_AGE_MINUTES * 60_000,
+      keywordPostsPerDay: config.X_KEYWORD_POSTS_PER_DAY,
+      onKeywordLimit: (limit) =>
+        void notifier.send(
+          `⏸️ X keyword searches read ${limit.toLocaleString("en-US")} posts today, the X_KEYWORD_POSTS_PER_DAY cap. ` +
+            "They pause until midnight UTC; your tracked accounts are still being watched.",
+        ),
     },
     log.child({ component: "x" }),
     clock,
   );
   xWatcher.start(config.X_POLL_SECONDS * 1000);
+  const keywordCap = config.X_KEYWORD_POSTS_PER_DAY > 0 ? ` (max ${config.X_KEYWORD_POSTS_PER_DAY.toLocaleString("en-US")} posts/day)` : "";
   status.push(
     `X: ${config.X_ACCOUNTS.length} accounts` +
-      (config.X_KEYWORDS.length ? `, ${config.X_KEYWORDS.length} keywords` : "") +
+      (config.X_KEYWORDS.length ? `, ${config.X_KEYWORDS.length} keywords${keywordCap}` : "") +
       `, checked every ${config.X_POLL_SECONDS}s`,
   );
 }
