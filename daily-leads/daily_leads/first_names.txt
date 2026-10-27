@@ -1,0 +1,58 @@
+# Common US first names and nicknames (English and Spanish). A pattern match
+# like "Owner: X Y" only counts as an owner name when X is in this list, so
+# phrases such as "Owner Portal" or "Sugar Land - Owner" are never taken as
+# names. An unlisted name is left blank rather than guessed.
+aaron abel abraham adam adan adolfo adrian agustin al alan alberto albert alejandro alex alexander
+alexis alfonso alfred alfredo ali allen alonzo alvaro alvin amado amos anders andre andres andrew
+andy angel angelo anthony antonio armando arnold arnulfo art arthur arturo austin avery barry
+bart beau ben benito benjamin bernard bernardo bill billy blake bob bobby brad bradley brady brandon
+brendan brent brett brian brice brock brody bruce bruno bryan bryce bubba buck bud butch byron
+caleb calvin cameron carl carlos carlton carson casey cecil cedric cesar chad charles charlie chase
+chester chris christian christopher chuck clarence clark clay clayton cliff clifford clint clinton
+clyde cody colby cole colin colt colton conner connor cory craig crispin cristian curt curtis dale
+dallas dalton damian damon dan dane daniel danny dante darin dario darius darnell darrel darrell
+darren darryl daryl dave david dean dennis derek derrick desmond devin dewayne dexter diego dillon
+dino dirk domingo dominic don donald donnie donny doug douglas drew duane dustin dwayne dwight earl
+ed eddie edgar eduardo edward edwin efrain eli elias elijah elliot elmer eloy emanuel emilio emmanuel
+enrique eric erick erik ernest ernesto ernie esteban ethan eugene evan everett fabian felipe felix
+fernando fidel francis francisco frank frankie franklin fred freddie freddy frederick gabe gabriel
+gage garrett gary gavin gene geoff geoffrey george gerald gerardo gilbert gilberto glen glenn gordon
+grady graham grant greg gregg gregory guadalupe guillermo gus gustavo guy hank harold harrison harry
+harvey hector henry herbert heriberto herman hernan homer horacio howard hugh hugo humberto hunter
+ian ignacio irvin isaac isaiah ismael israel ivan jack jackson jacob jaime jake james jamie jared
+jason javier jay jeff jeffery jeffrey jeremiah jeremy jerome jerry jesse jesus jim jimmie jimmy joaquin
+joe joel joey john johnathan johnny jon jonah jonathan jordan jorge jose joseph josh joshua juan julian
+julio justin kaleb karl keith kelly kelvin ken kendall kenneth kenny kent kevin kirk kris kurt kyle
+lance landon lane larry lawrence lee leo leon leonard leonardo leroy leslie lewis lloyd logan lonnie
+lorenzo louie louis lucas luis luke lupe luther mack malcolm manny manuel marc marco marcos marcus mario
+mark marshall martin marty marvin mason mateo matt matthew maurice max mauricio maxwell melvin micah
+michael miguel mike miles milton mitch mitchell moises monte morgan moses nathan nathaniel neal ned
+neil nelson nicholas nick nicolas noah noe noel norman octavio omar orlando oscar owen pablo pat
+patrick paul pedro percy perry pete peter phil phillip preston quentin quinn rafael ralph ramiro
+ramon randall randy raul ray raymond reggie reginald rene reuben rex rey reynaldo ricardo rich richard
+rick rickey ricky rigoberto riley rob robert roberto robin rocky rod rodney rodolfo rodrigo rogelio
+roger roland rolando roman ron ronald ronnie ross roy ruben rudy rudolph russ russell rusty ryan sal
+salvador sam samuel santiago santos saul scott sean sergio seth shane shannon shaun shawn sheldon
+sidney silvio simon skip sonny spencer stan stanley stephen steve steven stuart taylor ted terrance
+terrence terry thad theodore thomas tim timothy toby todd tom tomas tommy tony travis trent trevor trey
+troy tucker ty tyler tyrone ulises valentin vance vernon vicente victor vince vincent wade walker
+wallace walt walter warren wayne wes wesley will william willie wilson wyatt xavier zach zachary zack
+abby adriana alejandra alexandra alice alicia alison allison alma amanda amber amy ana andrea angela
+angelica angie anita ann anna anne annette april araceli ashley audrey barbara beatriz becky belinda
+beth betty beverly blanca bonnie brandi brenda brittany brooke candace carla carmen carol carolina
+caroline carrie cassandra catherine cathy cecilia celia charlotte cheryl christina christine cindy
+claire claudia connie consuelo courtney crystal cynthia daisy dana danielle dawn debbie deborah debra
+delia denise diana diane dolores donna dora doris dorothy elaine elena elisa elizabeth ellen emily
+emma erica erika erin esmeralda esperanza estela esther eva evelyn faith fatima frances gabriela
+gail gina gladys gloria grace graciela guadalupe hannah heather heidi helen holly irene iris isabel
+jackie jacqueline jamie jane janet janice jasmine jean jeanette jenna jennifer jenny jessica jill
+joan joanna jocelyn josefina joy joyce juana juanita judith judy julia julie karen karina kate
+katherine kathleen kathy katie kayla kelly kim kimberly kristen kristin kristina laura lauren leah
+leticia lillian linda lindsey lisa liz lori lorena lucia luz lydia lynn mandy margaret margarita
+maria maribel marie marilyn marisol marissa martha mary maureen megan melanie melissa mercedes michelle
+miranda miriam monica monique nancy natalie nicole nora norma olga olivia pamela patricia paula peggy
+penny priscilla rachel raquel rebecca regina renee rita roberta robin rocio rosa rosalinda rose
+rosemary ruth sabrina samantha sandra sara sarah shannon sharon sheila shelby shelly sherry shirley
+silvia sofia sonia stacy stephanie sue susan suzanne sylvia tamara tammy tanya tara teresa terri
+theresa tiffany tina tracy valerie vanessa veronica vicki victoria virginia wanda wendy whitney
+yesenia yolanda yvette yvonne

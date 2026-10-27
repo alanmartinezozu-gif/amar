@@ -1,0 +1,68 @@
+# daily-leads settings. API keys live in .env, never here.
+
+trades:
+  - roofing
+  - HVAC
+
+# "City, ST". Each trade is searched as "<trade> in <city>".
+cities:
+  - Houston, TX
+  - San Antonio, TX
+  - Dallas, TX
+  - Phoenix, AZ
+
+leads_per_day: 50
+
+# Google review range. Keeps owner-operated shops, drops brand-new
+# listings and big franchises.
+min_reviews: 10
+max_reviews: 300
+
+# Your first name, used to sign the missed-call text ("Hi, it's Alan...").
+# Leave blank and the texts won't be signed.
+sender_name: ""
+
+# ---------------------------------------------------------------------------
+# Advanced. The defaults are fine for a daily run.
+# ---------------------------------------------------------------------------
+sourcing:
+  # Places per Outscraper request (multiple of 20). Each place is billed.
+  page_size: 40
+  # Stop paging a search after this many pages (Google Maps tops out ~400).
+  max_pages_per_query: 10
+  # Enrich this many x leads_per_day candidates, then keep the best.
+  candidate_multiplier: 3
+
+crawler:
+  user_agent: "Mozilla/5.0 (compatible; daily-leads/1.0; public business contact lookup)"
+  # Name matched against robots.txt rules.
+  robots_token: daily-leads
+  # Minimum seconds between requests to the same site (robots.txt
+  # Crawl-delay wins if it is longer).
+  delay_seconds: 1.5
+  timeout_seconds: 15
+  # Websites fetched in parallel (each site is still fetched one page at a time).
+  concurrency: 8
+
+claude:
+  model: claude-opus-5-5
+  # low | medium | high. medium is the model default; low is cheaper.
+  effort: medium
+  concurrency: 4
+
+hunter:
+  enabled: true
+  min_confidence: 50
+
+cache:
+  dir: .cache
+  # How long a cached response is reused before it is fetched (and billed) again.
+  outscraper_days: 30
+  pages_days: 14
+  hunter_days: 60
+  claude_days: 30
+
+paths:
+  history_file: leads_history.csv
+  output_dir: output
+  log_dir: logs

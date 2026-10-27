@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+# Local working data: API/page cache, daily exports, logs and the
+# delivered-leads history. Back up leads_history.csv - it is what stops
+# a business from showing up twice.
+.cache/
+output/
+logs/
+leads_history.csv
