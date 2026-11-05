@@ -1,0 +1,31 @@
+[
+ {
+  "shape": "menu board",
+  "theme": "sticker",
+  "axes": "light/display-heavy/chromatic-magenta",
+  "hero": "Settled",
+  "nav": "edge-aligned",
+  "footer": "index columns",
+  "imagery": "photographs, the shop own 3, cropped from screenshots",
+  "photos": [],
+  "entry": "hero then teal menu band",
+  "fingerprint": "hero-settled/switcher-menu/bento-proof/offer-trays/rows-visit",
+  "sections": [
+   "hero",
+   "switcher",
+   "bento",
+   "offer",
+   "rows",
+   "footer"
+  ],
+  "signature": "the loaded watermelon as a die-cut photo with the shop logo sticker on its corner",
+  "waived": [
+   "80"
+  ],
+  "prompt": "a website for Antojitos Mi Pueblito, Rock Springs WY, in the same vibe as its brand",
+  "job": "visit",
+  "draw": "3213c8",
+  "date": "2026-11-05",
+  "mode": "build"
+ }
+]
