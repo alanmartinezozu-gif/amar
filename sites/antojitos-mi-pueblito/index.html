@@ -21,6 +21,8 @@
     "servesCuisine": "Mexican",
     "telephone": "+1-307-350-0926",
     "address": { "@type": "PostalAddress", "streetAddress": "726 Pilot Butte Ave", "addressLocality": "Rock Springs", "addressRegion": "WY", "postalCode": "82901", "addressCountry": "US" },
+    "openingHours": ["Tu 12:30-20:30", "We-Sa 12:30-21:00", "Su 12:30-18:30"],
+    "hasMenu": "https://www.doordash.com/store/antojitos-mi-pueblito-rock-springs-35186099/",
     "sameAs": ["https://www.facebook.com/antojitosmipueblito"]
   }
   </script>
@@ -51,7 +53,7 @@
         <p class="lead">Mango con chile, elote con Takis, ceviche and aguachile, in Rock Springs.</p>
         <div class="hero__actions">
           <a class="btn btn--primary" href="tel:+13073500926">Call to order</a>
-          <a class="btn" href="#menu">See the menu</a>
+          <a class="btn" href="https://www.doordash.com/store/antojitos-mi-pueblito-rock-springs-35186099/">Order on DoorDash</a>
         </div>
       </div>
       <div class="hero__visual">
@@ -70,7 +72,7 @@
     <div class="container">
       <div class="grid menu__head">
         <h2 id="menu-title">Fruta, elotes, botanas y mariscos</h2>
-        <p>Prices as listed for online orders. There is more at the counter.</p>
+        <p>Prices as listed on <a href="https://www.doordash.com/store/antojitos-mi-pueblito-rock-springs-35186099/">DoorDash</a>. There is more at the counter.</p>
       </div>
 
       <div class="tabs" role="tablist" aria-label="Menu sections">
@@ -209,9 +211,16 @@
       <div class="visit__main">
         <dl class="facts">
           <div><dt>Where</dt><dd>Downtown Rock Springs, WY 82901</dd></div>
-          <div><dt>Hours</dt><dd><span class="fill" data-fill="hours">Hours to be confirmed</span></dd></div>
+          <div><dt>Hours</dt><dd>
+            <ul class="hours">
+              <li data-days="2"><span class="hours__day">Tuesday</span><span>12:30 to 8:30 pm</span></li>
+              <li data-days="3 4 5 6"><span class="hours__day">Wednesday to Saturday</span><span>12:30 to 9 pm</span></li>
+              <li data-days="0"><span class="hours__day">Sunday</span><span>12:30 to 6:30 pm</span></li>
+              <li data-days="1"><span class="hours__day">Monday</span><span>Closed</span></li>
+            </ul>
+          </dd></div>
           <div><dt>Phone</dt><dd><a href="tel:+13073500926">307 350 0926</a></dd></div>
-          <div><dt>Pickup and delivery</dt><dd><a href="https://www.google.com/maps/search/?api=1&amp;query=Antojitos+Mi+Pueblito+726+Pilot+Butte+Ave+Rock+Springs+WY">Order on Google</a></dd></div>
+          <div><dt>Pickup and delivery</dt><dd><a href="https://www.doordash.com/store/antojitos-mi-pueblito-rock-springs-35186099/">Order on DoorDash</a></dd></div>
           <div><dt>Facebook</dt><dd><a href="https://www.facebook.com/antojitosmipueblito">@antojitosmipueblito</a></dd></div>
         </dl>
         <a class="btn btn--primary visit__cta" href="https://www.google.com/maps/dir/?api=1&amp;destination=726+Pilot+Butte+Ave+Rock+Springs+WY+82901">Get directions</a>
@@ -243,6 +252,13 @@
 </footer>
 
 <script>
+  const today = { Sun: 0, Mon: 1, Tue: 2, Wed: 3, Thu: 4, Fri: 5, Sat: 6 }[new Intl.DateTimeFormat('en-US', { timeZone: 'America/Denver', weekday: 'short' }).format(new Date())];
+  document.querySelectorAll('.hours li').forEach((li) => {
+    if (li.dataset.days.split(' ').map(Number).includes(today)) {
+      li.classList.add('is-today');
+      li.querySelector('.hours__day').insertAdjacentHTML('beforeend', '<span class="visually-hidden"> (today)</span>');
+    }
+  });
   const tabs = [...document.querySelectorAll('[role="tab"]')];
   const select = (tab, focus) => {
     tabs.forEach((t) => {

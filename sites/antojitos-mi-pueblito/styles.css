@@ -120,7 +120,10 @@ button:disabled { opacity: 0.55; cursor: not-allowed; }
 .facts a { text-decoration-thickness: 2px; text-decoration-color: var(--color-accent); }
 .facts a:hover { color: var(--color-accent-deep); }
 .facts a:focus-visible { outline: 3px solid var(--color-focus); outline-offset: 2px; }
-.fill { padding: 0 0.25em; border: 1px dashed color-mix(in oklch, var(--color-muted) 70%, transparent); border-radius: 3px; color: var(--color-muted); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+.hours { display: grid; gap: var(--space-3xs); margin: 0; padding: 0; list-style: none; font-size: var(--text-md); font-weight: 400; }
+.hours li { display: flex; flex-wrap: wrap; justify-content: space-between; column-gap: var(--space-md); margin-inline: calc(-1 * var(--space-xs)); padding: var(--space-2xs) var(--space-xs); border-radius: 8px; }
+.hours__day { font-weight: 700; }
+.hours li.is-today { background: var(--color-accent-2); }
 
 /* ---------- footer ---------- */
 .footer { background: var(--color-paper-2); padding-block: var(--space-3xl) var(--space-xl); }
