@@ -1,5 +1,34 @@
 [
  {
+  "shape": "Bento Grid",
+  "theme": "kiln",
+  "axes": "dark/high-contrast-serif/chromatic-pink",
+  "hero": "Counter",
+  "nav": "banner over a retracting bar",
+  "footer": "letter close",
+  "imagery": "photographs, the shop own 8, cropped from screenshots",
+  "photos": [],
+  "entry": "estimate form in the hero",
+  "fingerprint": "hero-counter/bento-shops-reviews/rows-repairs/band-before-after/showcase-people",
+  "sections": [
+   "hero",
+   "bento",
+   "rows",
+   "band",
+   "showcase",
+   "footer"
+  ],
+  "signature": "the free-estimate form, photo upload and all, on the first screen",
+  "waived": [
+   "49b"
+  ],
+  "prompt": "a website for Streamline Auto Collision, El Paso, same vibe as its brand, with an About page about the owner, before and afters, and an estimate form",
+  "job": "book",
+  "draw": "f367e3",
+  "date": "2026-11-10",
+  "mode": "build"
+ },
+ {
   "shape": "menu board",
   "theme": "sticker",
   "axes": "light/display-heavy/chromatic-magenta",
