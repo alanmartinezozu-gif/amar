@@ -1,0 +1,16 @@
+{
+  "title": "Your Product",
+  "subtitle": "Late invoices",
+  "button": "Chase all",
+  "total_label": "Collected",
+  "sample_data": true,
+  "accent": "#D97757",
+  "statuses": ["Reminder sent", "Paid"],
+  "rows": [
+    { "name": "Granite State Tile", "amount": "$15,300.00", "note": "71 days late" },
+    { "name": "Alder Creek Foods", "amount": "$12,480.00", "note": "62 days late" },
+    { "name": "Fennel & Co. Produce", "amount": "$8,950.00", "note": "47 days late" },
+    { "name": "Marlow Paper", "amount": "$6,240.00", "note": "38 days late" },
+    { "name": "Tern Bay Seafood", "amount": "$5,240.00", "note": "33 days late" }
+  ]
+}

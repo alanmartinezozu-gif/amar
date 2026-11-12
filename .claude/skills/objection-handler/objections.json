@@ -1,0 +1,145 @@
+{
+  "not-built": {
+    "label": "Objection: it isn't built yet",
+    "hear": [
+      "(isn't|is not|not) (built|finished|ready|done|live)",
+      "doesn't exist",
+      "does not exist",
+      "just a demo",
+      "only a demo",
+      "vaporware",
+      "when (will|is) it (ship|ready|done|live)",
+      "not real yet"
+    ],
+    "say": "You're right, it isn't finished, and I'd rather say so up front. {not_built_line} It ships within {ships_in} days of payment, and you decide what goes in it. {refund_line}",
+    "why": "Say it before they do. The honest answer is the whole pitch: they get it built their way, at a price they will never see again, with a way out."
+  },
+  "trust": {
+    "label": "Objection: what if you never ship it",
+    "hear": [
+      "never ship",
+      "don't ship",
+      "do not ship",
+      "what if you (don't|do not|can't|cannot|never|fail|disappear)",
+      "how do i know",
+      "why should (we|i) trust",
+      "who are you",
+      "never heard of",
+      "too small",
+      "track record",
+      "go out of business",
+      "take the money"
+    ],
+    "say": "Fair question, and you should ask it. {refund_line} You pay through Stripe and you get a receipt, and I'll put the refund in writing. Want to talk on a call before you decide?",
+    "why": "A small unknown vendor asking for money up front is a real risk. Don't argue with it. Make the way out plain, and offer a conversation. Never invent a customer or a track record."
+  },
+  "up-front": {
+    "label": "Objection: why pay up front",
+    "hear": [
+      "up ?front",
+      "in advance",
+      "before (it ships|we see|we get|delivery|it's built|it is built)",
+      "pay (when|once|after) (it|you)",
+      "net ?30",
+      "net ?60",
+      "invoice (us|me) (later|after)",
+      "deposit"
+    ],
+    "say": "Paying now is what gets it built to your requirements instead of someone else's, at this price. If all of it up front is hard, tell me what you could do and I'll see what I can make work.",
+    "why": "It is a fair ask, so be flexible on the structure before the price. A deposit is a real yes, and /pre-sale record --deposit logs it. Only agree one if the user says it is on the table."
+  },
+  "price": {
+    "label": "Objection: price",
+    "hear": [
+      "too expensive",
+      "too much",
+      "can't afford",
+      "cannot afford",
+      "out of (our|my) budget",
+      "over (our|my) budget",
+      "no budget",
+      "cheaper",
+      "pricey",
+      "costs? (a lot|too much)",
+      "that's a lot",
+      "steep",
+      "(lower|better) price",
+      "discount"
+    ],
+    "say": "Totally fair. {value_line} You pay {they_pay} for this today, so the comparison is right there. Which part of the price is the problem: the total, or paying it all at once?",
+    "why": "Agree first, put it next to what they already pay, then find out what the real problem is. Never drop the price without changing what they get."
+  },
+  "timing": {
+    "label": "Objection: timing",
+    "hear": [
+      "not (the )?right (time|now)",
+      "bad time",
+      "busy season",
+      "next (year|quarter|month)",
+      "after the holidays",
+      "come back (to me )?(later|in)",
+      "maybe later",
+      "not yet",
+      "too busy"
+    ],
+    "say": "Makes sense. What would need to be true for this to be the right time? If there is a date, I'll note it and come back to you then, and not before.",
+    "why": "Find out if timing is the real reason. If it is, agree a date and keep to it."
+  },
+  "think": {
+    "label": "Objection: needs to think",
+    "hear": [
+      "think about it",
+      "think it over",
+      "sleep on it",
+      "mull it over",
+      "let me think",
+      "get back to you"
+    ],
+    "say": "Of course, take the time you need. Is there one thing you would want answered before you decide? Happy to send it in writing.",
+    "why": "Don't push. Ask what is unanswered, because that is usually the real objection. Then let /follow-up keep it alive, within its limits."
+  },
+  "authority": {
+    "label": "Objection: someone else decides",
+    "hear": [
+      "talk to (my|our|the)",
+      "run (it|this) (by|past)",
+      "ask (my|our|the) (boss|cfo|ceo|partner|team)",
+      "not my (call|decision)",
+      "need approval",
+      "board has to",
+      "(cfo|ceo|owner|partner) (decides|signs|has to)",
+      "check with (my|our|the)"
+    ],
+    "say": "Makes sense. Would it help if I wrote one short page you can forward, with what it does, the price and how the refund works? And if it's useful, I'm glad to join when you talk.",
+    "why": "Make it easy for your champion to sell it inside. Don't go around them to the person they named without asking first."
+  },
+  "vendor": {
+    "label": "Objection: already have someone",
+    "hear": [
+      "already (have|use|pay|work with)",
+      "happy with",
+      "under contract",
+      "locked in",
+      "in a contract",
+      "our (current )?vendor",
+      "our current"
+    ],
+    "say": "Good to know. When does that come up for renewal? If it isn't soon, no problem. I'd only want to talk when switching would actually save you money.",
+    "why": "Respect it. A contract date is useful: note it with /follow-up, and say nothing untrue or unkind about the vendor."
+  },
+  "proof": {
+    "label": "Objection: wants proof",
+    "hear": [
+      "case stud(y|ies)",
+      "references?",
+      "who else",
+      "other customers",
+      "any customers",
+      "show me (the )?results",
+      "proof",
+      "does it (really |actually )?work"
+    ],
+    "say": "Honest answer: you would be one of the first, which is why it is priced the way it is. What I can show you is the demo, working with sample data, and what it would look like on your numbers. {refund_line}",
+    "why": "Never invent a customer, a number or a quote. Being early is the reason for the price, so say so. Once you have a real result, /case-study writes it up."
+  }
+}

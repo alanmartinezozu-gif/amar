@@ -1,0 +1,15 @@
+{
+  "1": {
+    "label": "The bump",
+    "body": "Hi {first},\n\nJust bumping this up in case it got buried. Happy to walk you through {thing} whenever suits.\n\nThanks,\n{me}"
+  },
+  "2": {
+    "label": "Give something",
+    "needs_hook": true,
+    "body": "Hi {first},\n\nOne more thing on this: {hook}\n\nThanks,\n{me}"
+  },
+  "3": {
+    "label": "The last note",
+    "body": "Hi {first},\n\nLast note from me on this. If it isn't a priority, no problem at all and I'll close the loop. If it is, reply with a day and I'll show you {thing} in 2 minutes.\n\nThanks,\n{me}"
+  }
+}

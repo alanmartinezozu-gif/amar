@@ -1,0 +1,553 @@
+{
+  "_about": "Illustrative: every company, person, price, payment and date on this board is fictional. Nothing was ever sent or charged. It is the example from the reel.",
+  "version": 1,
+  "me": {
+    "name": "Sam Rivera",
+    "company": "Your Company",
+    "email": "hello@yourcompany.example",
+    "address": "100 Main St, Suite 400, Austin, TX 78701",
+    "product": "Your Product",
+    "does": "Chases your late invoices automatically",
+    "value_line": "It costs about a third of what you pay a collections service today.",
+    "target_customers": 3
+  },
+  "problems": [
+    {
+      "problem": "Chasing late invoices",
+      "who": "Freight companies",
+      "pay_month": 6400.0,
+      "source": "What North Pier's AR manager told us (illustrative)",
+      "estimate": false,
+      "basis": null,
+      "notes": null,
+      "phrase": "chase late invoices",
+      "picked": true,
+      "id": "chasing-late-invoices"
+    },
+    {
+      "problem": "Answering after-hours calls",
+      "who": "Plumbing and HVAC",
+      "pay_month": 3800.0,
+      "source": null,
+      "estimate": true,
+      "basis": "illustrative figure for this example",
+      "notes": null,
+      "phrase": null,
+      "picked": false,
+      "id": "answering-after-hours-calls"
+    },
+    {
+      "problem": "Filing insurance claims",
+      "who": "Auto body shops",
+      "pay_month": 4500.0,
+      "source": null,
+      "estimate": true,
+      "basis": "illustrative figure for this example",
+      "notes": null,
+      "phrase": null,
+      "picked": false,
+      "id": "filing-insurance-claims"
+    },
+    {
+      "problem": "Renewing contracts on time",
+      "who": "Security firms",
+      "pay_month": 5200.0,
+      "source": null,
+      "estimate": true,
+      "basis": "illustrative figure for this example",
+      "notes": null,
+      "phrase": null,
+      "picked": false,
+      "id": "renewing-contracts-on-time"
+    },
+    {
+      "problem": "Scheduling field crews",
+      "who": "Landscapers",
+      "pay_month": 2900.0,
+      "source": null,
+      "estimate": true,
+      "basis": "illustrative figure for this example",
+      "notes": null,
+      "phrase": null,
+      "picked": false,
+      "id": "scheduling-field-crews"
+    }
+  ],
+  "companies": [
+    {
+      "name": "North Pier Logistics",
+      "website": "https://northpierlogistics.com",
+      "what": "Regional freight, 240 trucks",
+      "problem_id": "chasing-late-invoices",
+      "spend_line": "Invoice collections service",
+      "spend_month": 6400.0,
+      "spend_source": "Their October expense report, shared by Priya Nair on an intro call (illustrative)",
+      "notes": null,
+      "id": "north-pier"
+    },
+    {
+      "name": "Saltmarsh Freight",
+      "website": "https://saltmarshfreight.com",
+      "what": "Regional freight",
+      "problem_id": "chasing-late-invoices",
+      "spend_line": "Outsourced collections",
+      "spend_month": 4800.0,
+      "spend_source": "Told to us on the demo call (illustrative)",
+      "notes": null,
+      "id": "saltmarsh"
+    },
+    {
+      "name": "Copperline Haul",
+      "website": "https://copperlinehaul.com",
+      "what": "Regional freight",
+      "problem_id": "chasing-late-invoices",
+      "spend_line": "Part-time collections clerk",
+      "spend_month": 3200.0,
+      "spend_source": "Told to us on the demo call (illustrative)",
+      "notes": null,
+      "id": "copperline"
+    },
+    {
+      "name": "Harrow Line Transport",
+      "website": "https://harrowlinetransport.example",
+      "what": "Regional freight",
+      "problem_id": "chasing-late-invoices",
+      "spend_line": null,
+      "spend_month": null,
+      "spend_source": null,
+      "notes": null,
+      "id": "harrow-line"
+    }
+  ],
+  "people": [
+    {
+      "company_id": "north-pier",
+      "name": "Renee Alvarez",
+      "title": "CFO",
+      "decides": "signs",
+      "email": "renee@northpierlogistics.com",
+      "email_source": "North Pier's team page (fictional)",
+      "note": null,
+      "do_not_contact": false,
+      "id": "renee-alvarez"
+    },
+    {
+      "company_id": "north-pier",
+      "name": "Tom Whitlock",
+      "title": "VP Finance",
+      "decides": "budget",
+      "email": null,
+      "email_source": null,
+      "note": null,
+      "do_not_contact": false,
+      "id": "tom-whitlock"
+    },
+    {
+      "company_id": "north-pier",
+      "name": "Priya Nair",
+      "title": "AR Manager",
+      "decides": "pain",
+      "email": null,
+      "email_source": null,
+      "note": null,
+      "do_not_contact": false,
+      "id": "priya-nair"
+    },
+    {
+      "company_id": "saltmarsh",
+      "name": "Marisol Reyes",
+      "title": "Controller",
+      "decides": "signs",
+      "email": "ap@saltmarshfreight.com",
+      "email_source": "Saltmarsh's contact page (fictional)",
+      "note": null,
+      "do_not_contact": false,
+      "id": "marisol-reyes"
+    },
+    {
+      "company_id": "copperline",
+      "name": "Dan Kowalski",
+      "title": "Owner",
+      "decides": "signs",
+      "email": "billing@copperlinehaul.com",
+      "email_source": "Copperline's contact page (fictional)",
+      "note": null,
+      "do_not_contact": false,
+      "id": "dan-kowalski"
+    },
+    {
+      "company_id": "harrow-line",
+      "name": "Gwen Tate",
+      "title": "Owner",
+      "decides": "signs",
+      "email": "office@harrowlinetransport.example",
+      "email_source": "Harrow Line's contact page (fictional)",
+      "note": null,
+      "do_not_contact": false,
+      "id": "gwen-tate"
+    }
+  ],
+  "deals": [
+    {
+      "company_id": "north-pier",
+      "person_id": "renee-alvarez",
+      "title": "Founding customer",
+      "stage": "paid",
+      "amount": 24000.0,
+      "next_step": "Build it. /launch-planner keeps the dates",
+      "created": "2026-10-23",
+      "ships_by": "2026-12-03",
+      "paid_on": "2026-11-03",
+      "lost_reason": null,
+      "id": "north-pier"
+    },
+    {
+      "company_id": "saltmarsh",
+      "person_id": "marisol-reyes",
+      "title": "Founding customer",
+      "stage": "paid",
+      "amount": 18000.0,
+      "next_step": "/requirements: confirm the list with them",
+      "created": "2026-10-23",
+      "ships_by": "2026-12-04",
+      "paid_on": "2026-11-04",
+      "lost_reason": null,
+      "id": "saltmarsh"
+    },
+    {
+      "company_id": "copperline",
+      "person_id": "dan-kowalski",
+      "title": "Founding customer",
+      "stage": "paid",
+      "amount": 12000.0,
+      "next_step": "/requirements: confirm the list with them",
+      "created": "2026-10-23",
+      "ships_by": "2026-12-05",
+      "paid_on": "2026-11-05",
+      "lost_reason": null,
+      "id": "copperline"
+    },
+    {
+      "company_id": "harrow-line",
+      "person_id": "gwen-tate",
+      "title": "Founding customer",
+      "stage": "lost",
+      "amount": 0,
+      "next_step": null,
+      "created": "2026-10-23",
+      "ships_by": null,
+      "paid_on": null,
+      "lost_reason": "We're all set, thanks.",
+      "id": "harrow-line"
+    }
+  ],
+  "activities": [
+    {
+      "id": "a1",
+      "date": "2026-10-26T09:04",
+      "deal_id": "north-pier",
+      "person_id": "renee-alvarez",
+      "channel": "email",
+      "type": "pitch",
+      "direction": "out",
+      "subject": "You pay $6,400 a month to chase invoices",
+      "text": "Hi Renee,\n\nNorth Pier pays about $6,400 a month to chase late invoices. We built a demo that does it automatically. Can I show you in 2 minutes?\n\nDemo: https://yourproduct.example/demo\n\nThanks,\nSam\n\n--\nYour Company | 100 Main St, Suite 400, Austin, TX 78701\nNot useful? Reply \"stop\" and I won't write again.\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a2",
+      "date": "2026-10-27T09:10",
+      "deal_id": "saltmarsh",
+      "person_id": "marisol-reyes",
+      "channel": "email",
+      "type": "pitch",
+      "direction": "out",
+      "subject": "Late invoices",
+      "text": "Hi Marisol,\n\nSaltmarsh pays about $4,800 a month to chase late invoices. We built a demo that does it automatically. Can I show you in 2 minutes?\n\nDemo: https://yourproduct.example/demo\n\nThanks,\nSam\n\n--\nYour Company | 100 Main St, Suite 400, Austin, TX 78701\nNot useful? Reply \"stop\" and I won't write again.\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a3",
+      "date": "2026-10-27T09:20",
+      "deal_id": "copperline",
+      "person_id": "dan-kowalski",
+      "channel": "email",
+      "type": "pitch",
+      "direction": "out",
+      "subject": "Late invoices",
+      "text": "Hi Dan,\n\nCopperline pays about $3,200 a month to chase late invoices. We built a demo that does it automatically. Can I show you in 2 minutes?\n\nDemo: https://yourproduct.example/demo\n\nThanks,\nSam\n\n--\nYour Company | 100 Main St, Suite 400, Austin, TX 78701\nNot useful? Reply \"stop\" and I won't write again.\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a4",
+      "date": "2026-10-27T09:30",
+      "deal_id": "harrow-line",
+      "person_id": "gwen-tate",
+      "channel": "email",
+      "type": "pitch",
+      "direction": "out",
+      "subject": "Late invoices",
+      "text": "Hi Gwen,\n\nFreight companies often pay about $6,400 a month to chase late invoices. We built a demo that does it automatically. Is this a problem at Harrow Line Transport? If it is, can I show you in 2 minutes?\n\nDemo: https://yourproduct.example/demo\n\nThanks,\nSam\n\n--\nYour Company | 100 Main St, Suite 400, Austin, TX 78701\nNot useful? Reply \"stop\" and I won't write again.\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a5",
+      "date": "2026-10-28T09:00",
+      "deal_id": "north-pier",
+      "person_id": "renee-alvarez",
+      "channel": "email",
+      "type": "followup",
+      "direction": "out",
+      "subject": "Follow-up 1",
+      "text": "Hi Renee,\n\nJust bumping this up in case it got buried. Happy to walk you through the demo whenever suits.\n\nThanks,\nSam\n\n--\nYour Company | 100 Main St, Suite 400, Austin, TX 78701\nNot useful? Reply \"stop\" and I won't write again.\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a6",
+      "date": "2026-10-28T14:20",
+      "deal_id": "north-pier",
+      "person_id": "renee-alvarez",
+      "channel": "email",
+      "type": "reply",
+      "direction": "in",
+      "subject": null,
+      "text": "Interesting. Can you show me tomorrow?"
+    },
+    {
+      "id": "a7",
+      "date": "2026-10-29T10:05",
+      "deal_id": "saltmarsh",
+      "person_id": "marisol-reyes",
+      "channel": "email",
+      "type": "reply",
+      "direction": "in",
+      "subject": null,
+      "text": "Sure, send a time."
+    },
+    {
+      "id": "a8",
+      "date": "2026-10-30T08:40",
+      "deal_id": "copperline",
+      "person_id": "dan-kowalski",
+      "channel": "email",
+      "type": "reply",
+      "direction": "in",
+      "subject": null,
+      "text": "This is exactly our problem. Friday?"
+    },
+    {
+      "id": "a9",
+      "date": "2026-10-28T16:00",
+      "deal_id": "harrow-line",
+      "person_id": "gwen-tate",
+      "channel": "email",
+      "type": "reply",
+      "direction": "in",
+      "subject": null,
+      "text": "We're all set, thanks."
+    },
+    {
+      "id": "a10",
+      "date": "2026-10-28T16:00",
+      "deal_id": "harrow-line",
+      "person_id": null,
+      "channel": "note",
+      "type": "stage",
+      "direction": null,
+      "subject": null,
+      "text": "moved to lost: We're all set, thanks."
+    },
+    {
+      "id": "a11",
+      "date": "2026-10-29",
+      "deal_id": "north-pier",
+      "person_id": null,
+      "channel": "note",
+      "type": "stage",
+      "direction": null,
+      "subject": null,
+      "text": "moved to demo-booked"
+    },
+    {
+      "id": "a12",
+      "date": "2026-11-02T10:15",
+      "deal_id": "north-pier",
+      "person_id": "renee-alvarez",
+      "channel": "email",
+      "type": "offer",
+      "direction": "out",
+      "subject": "Your Product: the offer",
+      "text": "# Your Product for North Pier Logistics\n\nToday you pay about $6,400 a month for invoice collections service ($76,800 a year).\n\nChases your late invoices automatically.\n\n## What you get\n\n- Every late invoice chased automatically\n- Built to your requirements, which we go through together after you pay\n\n## The price\n\nFounding customer · 12 months: $24,000.00, paid up front.\n\n## When\n\nShips within 30 days of payment, built to your requirements.\n\n## What you should know\n\nThis product is not finished yet. You are paying now for the version we build to your requirements.\n\nIf it has not shipped by the promised date, or we can't build what you asked for, you get every dollar back.\n\n## Next step\n\nSay yes and I will send you a secure Stripe link. Once you have paid, we go through your requirements together, and that is what we build.\n\nSam Rivera\nYour Company\nhello@yourcompany.example\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a13",
+      "date": "2026-10-30",
+      "deal_id": "saltmarsh",
+      "person_id": null,
+      "channel": "note",
+      "type": "stage",
+      "direction": null,
+      "subject": null,
+      "text": "moved to demo-booked"
+    },
+    {
+      "id": "a14",
+      "date": "2026-11-03T10:15",
+      "deal_id": "saltmarsh",
+      "person_id": "marisol-reyes",
+      "channel": "email",
+      "type": "offer",
+      "direction": "out",
+      "subject": "Your Product: the offer",
+      "text": "# Your Product for Saltmarsh Freight\n\nToday you pay about $4,800 a month for outsourced collections ($57,600 a year).\n\nChases your late invoices automatically.\n\n## What you get\n\n- Every late invoice chased automatically\n- Built to your requirements, which we go through together after you pay\n\n## The price\n\nFounding customer · 12 months: $18,000.00, paid up front.\n\n## When\n\nShips within 30 days of payment, built to your requirements.\n\n## What you should know\n\nThis product is not finished yet. You are paying now for the version we build to your requirements.\n\nIf it has not shipped by the promised date, or we can't build what you asked for, you get every dollar back.\n\n## Next step\n\nSay yes and I will send you a secure Stripe link. Once you have paid, we go through your requirements together, and that is what we build.\n\nSam Rivera\nYour Company\nhello@yourcompany.example\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a15",
+      "date": "2026-10-30",
+      "deal_id": "copperline",
+      "person_id": null,
+      "channel": "note",
+      "type": "stage",
+      "direction": null,
+      "subject": null,
+      "text": "moved to demo-booked"
+    },
+    {
+      "id": "a16",
+      "date": "2026-11-04T10:15",
+      "deal_id": "copperline",
+      "person_id": "dan-kowalski",
+      "channel": "email",
+      "type": "offer",
+      "direction": "out",
+      "subject": "Your Product: the offer",
+      "text": "# Your Product for Copperline Haul\n\nToday you pay about $3,200 a month for part-time collections clerk ($38,400 a year).\n\nChases your late invoices automatically.\n\n## What you get\n\n- Every late invoice chased automatically\n- Built to your requirements, which we go through together after you pay\n\n## The price\n\nFounding customer · 12 months: $12,000.00, paid up front.\n\n## When\n\nShips within 30 days of payment, built to your requirements.\n\n## What you should know\n\nThis product is not finished yet. You are paying now for the version we build to your requirements.\n\nIf it has not shipped by the promised date, or we can't build what you asked for, you get every dollar back.\n\n## Next step\n\nSay yes and I will send you a secure Stripe link. Once you have paid, we go through your requirements together, and that is what we build.\n\nSam Rivera\nYour Company\nhello@yourcompany.example\n",
+      "approval": "yes"
+    },
+    {
+      "id": "a17",
+      "date": "2026-11-04",
+      "deal_id": "north-pier",
+      "person_id": null,
+      "channel": "note",
+      "type": "note",
+      "direction": null,
+      "subject": null,
+      "text": "requirements confirmed: Yes, that's what we need."
+    }
+  ],
+  "offer": {
+    "item": "Founding customer · 12 months",
+    "ships_in_days": 30,
+    "refund_line": "If it has not shipped by the promised date, or we can't build what you asked for, you get every dollar back.",
+    "not_built_line": "This product is not finished yet. You are paying now for the version we build to your requirements."
+  },
+  "payments": [
+    {
+      "id": "p1",
+      "deal_id": "north-pier",
+      "amount": 24000.0,
+      "date": "2026-11-03",
+      "ref": "pi_example_northpier",
+      "refunded_on": null
+    },
+    {
+      "id": "p2",
+      "deal_id": "saltmarsh",
+      "amount": 18000.0,
+      "date": "2026-11-04",
+      "ref": "pi_example_saltmarsh",
+      "refunded_on": null
+    },
+    {
+      "id": "p3",
+      "deal_id": "copperline",
+      "amount": 12000.0,
+      "date": "2026-11-05",
+      "ref": "pi_example_copperline",
+      "refunded_on": null
+    }
+  ],
+  "requirements": [
+    {
+      "id": "r1",
+      "deal_id": "north-pier",
+      "ask": "Text the customer first, then email",
+      "feature": "Text + email sequence",
+      "said": null,
+      "done": false,
+      "confirmed": {
+        "said": "Yes, that's what we need.",
+        "at": "2026-11-04"
+      }
+    },
+    {
+      "id": "r2",
+      "deal_id": "north-pier",
+      "ask": "Sync with QuickBooks",
+      "feature": "QuickBooks sync",
+      "said": null,
+      "done": false,
+      "confirmed": {
+        "said": "Yes, that's what we need.",
+        "at": "2026-11-04"
+      }
+    },
+    {
+      "id": "r3",
+      "deal_id": "north-pier",
+      "ask": "Escalate after 30 days",
+      "feature": "Auto-escalation at 30 days",
+      "said": null,
+      "done": false,
+      "confirmed": {
+        "said": "Yes, that's what we need.",
+        "at": "2026-11-04"
+      }
+    },
+    {
+      "id": "r4",
+      "deal_id": "north-pier",
+      "ask": "Weekly report to the CFO",
+      "feature": "Monday CFO report",
+      "said": null,
+      "done": false,
+      "confirmed": {
+        "said": "Yes, that's what we need.",
+        "at": "2026-11-04"
+      }
+    },
+    {
+      "id": "r5",
+      "deal_id": "saltmarsh",
+      "ask": "It has to work with QuickBooks",
+      "feature": "QuickBooks sync",
+      "said": null,
+      "done": false,
+      "confirmed": null
+    },
+    {
+      "id": "r6",
+      "deal_id": "saltmarsh",
+      "ask": "Text them before you email them",
+      "feature": "Text + email sequence",
+      "said": null,
+      "done": false,
+      "confirmed": null
+    },
+    {
+      "id": "r7",
+      "deal_id": "copperline",
+      "ask": "Flag anyone over 30 days",
+      "feature": "Auto-escalation at 30 days",
+      "said": null,
+      "done": false,
+      "confirmed": null
+    }
+  ],
+  "case_studies": [],
+  "marketing_spent": 0.0,
+  "suppression": []
+}

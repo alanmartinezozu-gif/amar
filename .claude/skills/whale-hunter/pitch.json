@@ -1,0 +1,10 @@
+{
+  "their-spend": {
+    "subject": "You pay {amount} a month to {phrase}",
+    "body": "Hi {first},\n\n{short} pays about {amount} a month to {phrase}. We built a demo that does it automatically. Can I show you in 2 minutes?\n\nDemo: {demo}\n\nThanks,\n{me}"
+  },
+  "market-spend": {
+    "subject": "{problem} at {short}",
+    "body": "Hi {first},\n\n{who} often pay about {amount} a month to {phrase}. We built a demo that does it automatically. Is this a problem at {short}? If it is, can I show you in 2 minutes?\n\nDemo: {demo}\n\nThanks,\n{me}"
+  }
+}
