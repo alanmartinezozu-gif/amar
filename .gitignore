@@ -9,3 +9,8 @@ data/
 .env.local
 coverage/
 .DS_Store
+
+# graphify local build state
+graphify-out/cache/
+graphify-out/.graphify_python
+graphify-out/.graphify_root
