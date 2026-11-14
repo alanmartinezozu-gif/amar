@@ -558,7 +558,17 @@
    "file": "biddesk/ingest.py",
    "line": 193,
    "doc": "Download documents the scrapers found links for. Failures are recorded, not hidden.",
-   "degree": 2
+   "degree": 3
+  },
+  {
+   "id": "biddesk.ingest.download_error",
+   "label": "download_error",
+   "kind": "function",
+   "module": "biddesk.ingest",
+   "file": "biddesk/ingest.py",
+   "line": 213,
+   "doc": "",
+   "degree": 1
   },
   {
    "id": "biddesk.ingest.create_manual_opportunity",
@@ -566,7 +576,7 @@
    "kind": "function",
    "module": "biddesk.ingest",
    "file": "biddesk/ingest.py",
-   "line": 214,
+   "line": 220,
    "doc": "Dashboard upload: drag in a bid PDF, get an Opportunity.",
    "degree": 4
   },
@@ -576,7 +586,7 @@
    "kind": "function",
    "module": "biddesk.ingest",
    "file": "biddesk/ingest.py",
-   "line": 232,
+   "line": 238,
    "doc": "Changes whenever the set of readable documents (or the notice text) changes.",
    "degree": 3
   },
@@ -638,7 +648,7 @@
    "file": "biddesk/models.py",
    "line": 1,
    "doc": "Plain records passed from scrapers to ingest, plus date parsing.",
-   "degree": 4
+   "degree": 5
   },
   {
    "id": "biddesk.models.DocLink",
@@ -648,7 +658,7 @@
    "file": "biddesk/models.py",
    "line": 10,
    "doc": "",
-   "degree": 2
+   "degree": 3
   },
   {
    "id": "biddesk.models.Opportunity",
@@ -658,7 +668,7 @@
    "file": "biddesk/models.py",
    "line": 17,
    "doc": "",
-   "degree": 4
+   "degree": 7
   },
   {
    "id": "biddesk.models.ScrapeResult",
@@ -668,7 +678,7 @@
    "file": "biddesk/models.py",
    "line": 34,
    "doc": "",
-   "degree": 3
+   "degree": 4
   },
   {
    "id": "biddesk.models.parse_datetime",
@@ -678,7 +688,7 @@
    "file": "biddesk/models.py",
    "line": 53,
    "doc": "Best-effort parse of things like 'Thursday, 6/26/25 at 2:00 PM MST' or",
-   "degree": 3
+   "degree": 5
   },
   {
    "id": "biddesk.models.guess_doc_type",
@@ -688,7 +698,7 @@
    "file": "biddesk/models.py",
    "line": 88,
    "doc": "",
-   "degree": 3
+   "degree": 4
   },
   {
    "id": "biddesk.reports",
@@ -809,6 +819,46 @@
    "line": 49,
    "doc": "",
    "degree": 2
+  },
+  {
+   "id": "biddesk.sources.civicplus",
+   "label": "biddesk.sources.civicplus",
+   "kind": "module",
+   "module": "biddesk.sources.civicplus",
+   "file": "biddesk/sources/civicplus.py",
+   "line": 1,
+   "doc": "CivicPlus (CivicEngage) \"Bid Postings\" module. Used by the City of Green River:",
+   "degree": 1
+  },
+  {
+   "id": "biddesk.sources.civicplus.parse_list",
+   "label": "parse_list",
+   "kind": "function",
+   "module": "biddesk.sources.civicplus",
+   "file": "biddesk/sources/civicplus.py",
+   "line": 26,
+   "doc": "",
+   "degree": 4
+  },
+  {
+   "id": "biddesk.sources.civicplus.parse_detail",
+   "label": "parse_detail",
+   "kind": "function",
+   "module": "biddesk.sources.civicplus",
+   "file": "biddesk/sources/civicplus.py",
+   "line": 49,
+   "doc": "",
+   "degree": 5
+  },
+  {
+   "id": "biddesk.sources.civicplus.scrape",
+   "label": "scrape",
+   "kind": "function",
+   "module": "biddesk.sources.civicplus",
+   "file": "biddesk/sources/civicplus.py",
+   "line": 83,
+   "doc": "",
+   "degree": 3
   },
   {
    "id": "biddesk.sources.revize",
@@ -1519,6 +1569,11 @@
   },
   {
    "source": "biddesk.ingest",
+   "target": "biddesk.ingest.download_error",
+   "kind": "contains"
+  },
+  {
+   "source": "biddesk.ingest",
    "target": "biddesk.ingest.download_pending",
    "kind": "contains"
   },
@@ -1580,6 +1635,11 @@
   {
    "source": "biddesk.ingest.create_manual_opportunity",
    "target": "biddesk.ingest.store_document",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.ingest.download_pending",
+   "target": "biddesk.ingest.download_error",
    "kind": "calls"
   },
   {
@@ -1835,6 +1895,76 @@
   {
    "source": "biddesk.settings.user_agent",
    "target": "biddesk.settings.env",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus",
+   "target": "biddesk.models",
+   "kind": "imports"
+  },
+  {
+   "source": "biddesk.sources.civicplus",
+   "target": "biddesk.sources.civicplus.parse_detail",
+   "kind": "contains"
+  },
+  {
+   "source": "biddesk.sources.civicplus",
+   "target": "biddesk.sources.civicplus.parse_list",
+   "kind": "contains"
+  },
+  {
+   "source": "biddesk.sources.civicplus",
+   "target": "biddesk.sources.civicplus.scrape",
+   "kind": "contains"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_detail",
+   "target": "biddesk.models.DocLink",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_detail",
+   "target": "biddesk.models.Opportunity",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_detail",
+   "target": "biddesk.models.guess_doc_type",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_detail",
+   "target": "biddesk.models.parse_datetime",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_list",
+   "target": "biddesk.models.Opportunity",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_list",
+   "target": "biddesk.models.ScrapeResult",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.parse_list",
+   "target": "biddesk.models.parse_datetime",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.scrape",
+   "target": "biddesk.models.Opportunity",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.scrape",
+   "target": "biddesk.sources.civicplus.parse_detail",
+   "kind": "calls"
+  },
+  {
+   "source": "biddesk.sources.civicplus.scrape",
+   "target": "biddesk.sources.civicplus.parse_list",
    "kind": "calls"
   },
   {

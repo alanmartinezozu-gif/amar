@@ -205,10 +205,16 @@ def download_pending(conn: sqlite3.Connection, fetcher: Fetcher, only_open: bool
                            d["doc_type"], doc_id=d["id"])
             done += 1
         except Exception as e:
-            conn.execute("UPDATE documents SET fetch_error=? WHERE id=?",
-                         (f"Download failed ({type(e).__name__}: {e}). Upload it by hand.", d["id"]))
+            conn.execute("UPDATE documents SET fetch_error=? WHERE id=?", (download_error(e), d["id"]))
             conn.commit()
     return done
+
+
+def download_error(e: Exception) -> str:
+    if isinstance(e, Blocked):
+        return ("Not downloaded: the file host does not allow automated downloads (robots.txt or a refusal). "
+                "Open the official posting, download it yourself and upload it here.")
+    return f"Download failed ({type(e).__name__}). Upload it by hand."
 
 
 def create_manual_opportunity(conn: sqlite3.Connection, title: str, owner_name: str = "", county: str = "",

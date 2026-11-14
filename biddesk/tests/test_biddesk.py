@@ -10,7 +10,7 @@ import pytest
 
 from biddesk import ai, briefs, db, ingest, match, reports
 from biddesk.models import Opportunity, ScrapeResult, parse_datetime
-from biddesk.sources import revize, scsd1_facilities, sweetwaternow
+from biddesk.sources import civicplus, revize, scsd1_facilities, sweetwaternow
 
 FIX = Path(__file__).parent / "fixtures"
 
@@ -78,6 +78,22 @@ def test_scsd1_facilities():
     assert lowell.prebid_mandatory is True
     tennis = next(o for o in r.items if "Rock Springs High School Tennis" in o.title)
     assert tennis.prebid_datetime == "2025-04-15T10:00"
+
+
+# --- CivicPlus (Green River) ---------------------------------------------------
+def test_civicplus_list_and_detail():
+    url = "https://www.grwyo.org/bids.aspx"
+    empty = civicplus.parse_list(read("civicplus_greenriver_empty.html"), url)
+    assert empty.layout_ok and empty.explicit_empty and empty.items == []
+    full = civicplus.parse_list(read("civicplus_greenriver_all.html"), url)
+    assert len(full.items) > 150 and not full.explicit_empty
+    reroof = next(o for o in full.items if "Natatorium Partial Reroof" in o.title)
+    assert reroof.url == "https://www.grwyo.org/bids.aspx?bidID=189" and reroof.due_datetime == "2022-05-04T15:00"
+    d = civicplus.parse_detail(read("civicplus_greenriver_detail.html"), url + "?bidID=213")
+    assert d.title == "RIVERVIEW DRIVE RECONSTRUCTION PHASE 1"
+    assert d.posted_date == "2025-06-06" and d.due_datetime == "2025-06-23T16:00"
+    assert d.documents[0].url == "https://www.grwyo.org/DocumentCenter/View/8259"
+    assert civicplus.parse_list("<html><body>new site</body></html>", url).layout_ok is False
 
 
 # --- SweetwaterNOW -----------------------------------------------------------

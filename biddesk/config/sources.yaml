@@ -30,7 +30,7 @@ sources:
     url: "https://qcpi.questcdn.com/cdn/posting/?group=8012359&provider=8012359&projType=all"
     method: manual
     check: weekly
-    notes: "Road projects are listed on QuestCDN, a third-party plan room. Not scraped until Alan decides."
+    notes: "Road projects are listed on QuestCDN. Its robots.txt (checked 2026-11-14) disallows all crawlers, so this stays manual: open the list by hand and upload documents."
 
   - name: "SCSD#1 - Facilities bids"
     owner_name: "Sweetwater County School District #1"
@@ -62,12 +62,13 @@ sources:
     check: daily
     notes: "No bids page on westernwyoming.edu; WWCC posts on Public Purchase. Phase 2 email parser."
 
-  - name: "City of Green River"
+  - name: "City of Green River - Bid Postings"
     owner_name: "City of Green River"
     owner_type: city
     county: Sweetwater
     city: Green River
-    url: "https://www.cityofgreenriver.org/"
-    method: email
+    url: "https://www.grwyo.org/bids.aspx"
+    method: scrape
+    parser: civicplus
     check: daily
-    notes: "Site redirects to www.grwyo.org; bids are received through Public Purchase. Phase 2 email parser."
+    notes: "cityofgreenriver.org redirects here. Newest posting on this page is June 2025; 2026 bids were taken through Public Purchase, so the Phase 2 email parser is still needed."
