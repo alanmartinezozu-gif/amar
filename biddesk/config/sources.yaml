@@ -1,0 +1,73 @@
+# Every bid source. `parser` names a module in biddesk/sources/.
+# method: scrape (run_daily fetches it) | email | manual (listed for the record, not fetched)
+# check: daily | weekly
+sources:
+  - name: "City of Rock Springs - Open Bids"
+    owner_name: "City of Rock Springs"
+    owner_type: city
+    county: Sweetwater
+    city: Rock Springs
+    url: "https://www.rswy.net/government/bid_information.php"
+    method: scrape
+    parser: revize
+    check: daily
+    notes: "Revize bid table. Bid packets are released after a contact form, so packets are uploaded by hand."
+
+  - name: "Sweetwater County - Purchasing Projects and Bidding"
+    owner_name: "Sweetwater County"
+    owner_type: county
+    county: Sweetwater
+    url: "https://www.sweetwatercountywy.gov/departments/purchasing/projects_and_bidding.php"
+    method: scrape
+    parser: revize
+    check: daily
+    notes: "Same Revize bid table as Rock Springs."
+
+  - name: "Sweetwater County - Public Works projects (QuestCDN)"
+    owner_name: "Sweetwater County Public Works"
+    owner_type: county
+    county: Sweetwater
+    url: "https://qcpi.questcdn.com/cdn/posting/?group=8012359&provider=8012359&projType=all"
+    method: manual
+    check: weekly
+    notes: "Road projects are listed on QuestCDN, a third-party plan room. Not scraped until Alan decides."
+
+  - name: "SCSD#1 - Facilities bids"
+    owner_name: "Sweetwater County School District #1"
+    owner_type: school
+    county: Sweetwater
+    city: Rock Springs
+    url: "https://sweetwater-county-school-district-1.echalksites.com/groups/4804/facilities/current_and_upcoming_project_bids"
+    method: scrape
+    parser: scsd1_facilities
+    check: daily
+
+  - name: "SweetwaterNOW - Legal notices"
+    owner_name: "SweetwaterNOW"
+    owner_type: news
+    county: Sweetwater
+    url: "https://www.sweetwaternow.com/category/legal-notice/"
+    method: scrape
+    parser: sweetwaternow
+    check: daily
+    notes: "robots.txt asks for 30s between requests and no /page/ URLs; only page 1 is read."
+
+  - name: "Western Wyoming Community College"
+    owner_name: "Western Wyoming Community College"
+    owner_type: college
+    county: Sweetwater
+    city: Rock Springs
+    url: "https://www.publicpurchase.com/"
+    method: email
+    check: daily
+    notes: "No bids page on westernwyoming.edu; WWCC posts on Public Purchase. Phase 2 email parser."
+
+  - name: "City of Green River"
+    owner_name: "City of Green River"
+    owner_type: city
+    county: Sweetwater
+    city: Green River
+    url: "https://www.cityofgreenriver.org/"
+    method: email
+    check: daily
+    notes: "Site redirects to www.grwyo.org; bids are received through Public Purchase. Phase 2 email parser."

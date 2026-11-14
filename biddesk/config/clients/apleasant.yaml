@@ -1,0 +1,19 @@
+name: "APLeasant"
+tier: "full"                 # finder | department | full
+contact_email: ""
+home_base: "Rock Springs, WY"
+max_travel_miles: 150
+counties: ["Sweetwater", "Sublette", "Uinta", "Lincoln", "Carbon"]
+trades: ["concrete", "earthwork_excavation", "general_building"]
+job_size_min: 25000
+job_size_max: 2000000
+bonding_capacity_single: null
+bonding_capacity_aggregate: null
+wydot_prequalified: false
+wydot_prequal_classes: []
+wyoming_resident_certified: null   # yes/no/unknown
+licenses: []
+insurance: {general_liability: null, auto: null, workers_comp: true}
+past_projects: []                  # for drafting qualifications
+competitors_to_watch: []
+notes: ""
