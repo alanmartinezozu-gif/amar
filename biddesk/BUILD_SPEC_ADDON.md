@@ -101,3 +101,22 @@ Done when: every open bid and proposal shows in one list with next action + date
 2. Build a simple static "Projects" page + a 1-page PDF Statement of Qualifications (company info, years in business, project list, bonding, insurance, references).
 3. Deploy to Netlify as a draft URL for Andy to review. Don't touch his live website without his OK.
 Done when: I have a draft projects page URL + qualifications PDF.
+
+## Monthly report for A. Pleasant (full tier)
+1. Public bids found / pursued / submitted / won / $ won
+2. Close losses + price gap
+3. Coming soon — projects from agendas
+4. Private leads + pipeline status
+5. Sub coverage on this month's bids
+6. Next month's deadlines
+
+## Build order
+1. Fill a_pleasant.yaml (after call with Andy) + add building_types matching
+2. Module A — Agenda scanner
+3. Module B — Sub quote requests
+4. Module E — Pipeline + follow-ups
+5. Module C — Private leads
+6. Module D — Proposal generator
+7. Module F — Portfolio + qualifications PDF
+
+Same guardrails as BUILD_SPEC.md §12: never submit bids, never set prices, never send email as Andy without approval, no login scraping, cite page references, ask me before spending money.
