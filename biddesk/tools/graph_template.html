@@ -1,0 +1,49 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bid Desk code graph</title>
+<style>
+:root{--bg:#f7f7f5;--panel:#fff;--ink:#1d1d1f;--mute:#6b6b70;--line:#c9c9cf;--call:#4a6fa5;--imp:#b0762a}
+@media(prefers-color-scheme:dark){:root{--bg:#17181b;--panel:#22242a;--ink:#ececf0;--mute:#9a9aa3;--line:#3c3f47;--call:#7fa3d9;--imp:#d6a15a}}
+*{box-sizing:border-box}html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font:14px/1.45 system-ui,sans-serif}
+#wrap{display:flex;height:100%}canvas{flex:1;min-width:0;display:block;cursor:grab}
+#side{width:320px;max-width:45vw;background:var(--panel);border-left:1px solid var(--line);padding:14px;overflow:auto}
+h1{font-size:16px;margin:0 0 8px}input[type=search]{width:100%;padding:7px 9px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+label{display:block;margin:6px 0;color:var(--mute)}.k{color:var(--mute);font-size:12px}code{font-size:12px;word-break:break-all}
+ul{padding-left:18px;margin:4px 0}li{cursor:pointer}li:hover{text-decoration:underline}.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+@media(max-width:700px){#wrap{flex-direction:column}#side{width:100%;max-width:none;height:42%;border-left:0;border-top:1px solid var(--line)}}
+</style></head><body><div id="wrap"><canvas id="c"></canvas><div id="side">
+<h1>Bid Desk code graph</h1><input id="q" type="search" placeholder="Search a function or module">
+<label><input type="checkbox" id="fn" checked> Show functions and classes</label>
+<p class="k">Blue lines: calls. Orange lines: imports. Grey: contains. Drag to pan, scroll to zoom, click a dot.</p>
+<div id="legend"></div><hr style="border:0;border-top:1px solid var(--line)"><div id="info"><p class="k">Click a node to see what it does, what it calls and what calls it.</p></div>
+</div></div><script>
+const G=/*GRAPH*/null,cv=document.getElementById('c'),cx=cv.getContext('2d'),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const mods=[...new Set(G.nodes.map(n=>n.module))],PAL=['#4e79a7','#e15759','#59a14f','#f28e2b','#b07aa1','#76b7b2','#edc948','#ff9da7','#9c755f','#8cd17d','#499894','#d37295','#86bcb6'];
+const col=m=>PAL[mods.indexOf(m)%PAL.length],byId=Object.fromEntries(G.nodes.map(n=>[n.id,n]));
+G.nodes.forEach((n,i)=>{const a=mods.indexOf(n.module)/mods.length*6.283,r=n.kind=='module'?260:300+Math.random()*120;n.x=Math.cos(a)*r+Math.random()*40;n.y=Math.sin(a)*r+Math.random()*40;n.vx=n.vy=0;n.r=n.kind=='module'?11:n.kind=='class'?6:4+Math.min(5,n.degree*.6)});
+let showFn=true,sel=null,hover=null,tx=0,ty=0,sc=1,alpha=1,drag=null,pan=null,moved=false;
+const vis=n=>showFn||n.kind=='module',E=()=>G.edges.map(e=>({s:byId[e.source],t:byId[e.target],k:e.kind})).filter(e=>vis(e.s)&&vis(e.t));
+function tick(){const N=G.nodes.filter(vis),ed=E();for(let i=0;i<N.length;i++)for(let j=i+1;j<N.length;j++){const a=N[i],b=N[j];let dx=a.x-b.x,dy=a.y-b.y,d2=dx*dx+dy*dy+.01;if(d2>90000)continue;const f=900/d2*alpha;dx*=f;dy*=f;a.vx+=dx;a.vy+=dy;b.vx-=dx;b.vy-=dy}
+for(const e of ed){const L=e.k=='contains'?45:e.k=='imports'?200:110,dx=e.t.x-e.s.x,dy=e.t.y-e.s.y,d=Math.hypot(dx,dy)||1,f=(d-L)/d*(e.k=='contains'?.08:.02)*alpha;e.s.vx+=dx*f;e.s.vy+=dy*f;e.t.vx-=dx*f;e.t.vy-=dy*f}
+for(const n of N){n.vx-=n.x*.002*alpha;n.vy-=n.y*.002*alpha;n.vx*=.82;n.vy*=.82;if(n!==drag){n.x+=n.vx;n.y+=n.vy}}alpha=Math.max(.03,alpha*.992)}
+function draw(){const w=cv.width=cv.clientWidth*devicePixelRatio,h=cv.height=cv.clientHeight*devicePixelRatio;cx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);cx.clearRect(0,0,w,h);cx.translate(cv.clientWidth/2+tx,cv.clientHeight/2+ty);cx.scale(sc,sc);
+const nb=new Set();if(sel)for(const e of G.edges){if(e.source==sel.id)nb.add(e.target);if(e.target==sel.id)nb.add(e.source)}
+for(const e of E()){const on=sel&&(e.s==sel||e.t==sel);cx.globalAlpha=sel?(on?.95:.06):(e.k=='contains'?.25:.45);cx.strokeStyle=e.k=='calls'?css('--call'):e.k=='imports'?css('--imp'):css('--line');cx.lineWidth=(on?1.8:.8)/sc;cx.beginPath();cx.moveTo(e.s.x,e.s.y);cx.lineTo(e.t.x,e.t.y);cx.stroke();
+if(on&&e.k!='contains'){const a=Math.atan2(e.t.y-e.s.y,e.t.x-e.s.x),px=e.t.x-Math.cos(a)*(e.t.r+2),py=e.t.y-Math.sin(a)*(e.t.r+2);cx.fillStyle=cx.strokeStyle;cx.beginPath();cx.moveTo(px,py);cx.lineTo(px-Math.cos(a-.4)*7,py-Math.sin(a-.4)*7);cx.lineTo(px-Math.cos(a+.4)*7,py-Math.sin(a+.4)*7);cx.fill()}}
+for(const n of G.nodes.filter(vis)){const dim=sel&&n!=sel&&!nb.has(n.id);cx.globalAlpha=dim?.15:1;cx.fillStyle=col(n.module);cx.beginPath();if(n.kind=='module')cx.rect(n.x-n.r,n.y-n.r,n.r*2,n.r*2);else cx.arc(n.x,n.y,n.r,0,6.3);cx.fill();if(n==sel||n==hover){cx.strokeStyle=css('--ink');cx.lineWidth=2/sc;cx.stroke()}
+if(n.kind=='module'||n==sel||n==hover||(!dim&&sel)||sc>1.5||n.degree>5){cx.fillStyle=css('--ink');cx.font=(n.kind=='module'?'600 12px':'11px')+' system-ui';cx.fillText(n.label,n.x+n.r+3,n.y+4)}}cx.globalAlpha=1}
+const pos=e=>{const r=cv.getBoundingClientRect();return[(e.clientX-r.left-cv.clientWidth/2-tx)/sc,(e.clientY-r.top-cv.clientHeight/2-ty)/sc]},hit=e=>{const[x,y]=pos(e);let best=null,bd=1e9;for(const n of G.nodes.filter(vis)){const d=Math.hypot(n.x-x,n.y-y);if(d<n.r+6/sc&&d<bd){bd=d;best=n}}return best};
+cv.onpointerdown=e=>{moved=false;drag=hit(e);if(!drag)pan=[e.clientX-tx,e.clientY-ty];cv.setPointerCapture(e.pointerId)};
+cv.onpointermove=e=>{moved=true;if(drag){[drag.x,drag.y]=pos(e);alpha=.4}else if(pan){tx=e.clientX-pan[0];ty=e.clientY-pan[1]}else hover=hit(e)};
+cv.onpointerup=e=>{if(!moved||drag&&Math.hypot(drag.vx,drag.vy)<50){const n=hit(e);if(n||!moved)pick(n)}drag=pan=null};
+cv.onwheel=e=>{e.preventDefault();sc=Math.min(4,Math.max(.25,sc*(e.deltaY<0?1.12:.89)))};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function pick(n){sel=n;const el=document.getElementById('info');if(!n){el.innerHTML='<p class="k">Click a node to see what it does, what it calls and what calls it.</p>';return}
+const list=(t,ids)=>ids.length?`<p class="k">${t} (${ids.length})</p><ul>${ids.map(i=>`<li data-id="${esc(i)}">${esc(i)}</li>`).join('')}</ul>`:'';
+const o=k=>G.edges.filter(e=>e.kind==k&&e.source==n.id).map(e=>e.target),i=k=>G.edges.filter(e=>e.kind==k&&e.target==n.id).map(e=>e.source);
+el.innerHTML=`<p><b>${esc(n.id)}</b><br><span class="k">${n.kind} · <code>${esc(n.file)}:${n.line}</code></span></p><p>${esc(n.doc||'No description.')}</p>`+list('Calls',o('calls'))+list('Called by',i('calls'))+list('Imports',o('imports'))+list('Imported by',i('imports'))+list('Contains',o('contains'));
+el.querySelectorAll('li').forEach(li=>li.onclick=()=>{const t=byId[li.dataset.id];if(t.kind!='module'&&!showFn){showFn=true;document.getElementById('fn').checked=true}pick(t);tx=-t.x*sc;ty=-t.y*sc})}
+document.getElementById('fn').onchange=e=>{showFn=e.target.checked;alpha=1};
+document.getElementById('q').oninput=e=>{const q=e.target.value.toLowerCase();if(q.length<2)return;const n=G.nodes.filter(vis).find(n=>n.label.toLowerCase().includes(q))||G.nodes.find(n=>n.id.toLowerCase().includes(q));if(n){pick(n);tx=-n.x*sc;ty=-n.y*sc}};
+document.getElementById('legend').innerHTML=mods.map(m=>`<div class="k"><span class="sw" style="background:${col(m)}"></span>${esc(m)}</div>`).join('');
+(function loop(){tick();draw();requestAnimationFrame(loop)})();
+</script></body></html>
