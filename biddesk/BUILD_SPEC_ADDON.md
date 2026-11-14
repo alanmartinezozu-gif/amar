@@ -82,3 +82,22 @@ Table: private_leads(id, company, project, building_type, location, stage, est_v
 Fable writes a 2-line "why this fits Andy + who to call" note per lead. Monthly report section: "Private projects to go after."
 Rules: public business info only. No home addresses, no scraping personal social media, no buying contact lists without asking me.
 Done when: I see real private leads with sources and can move one through statuses.
+
+## Module D — Proposal Generator (private jobs)
+1. Dashboard form: client, project, scope notes (rough notes OK), price (entered by Andy — AI never sets the price), inclusions, exclusions, schedule, payment terms.
+2. Fable writes a branded proposal: cover page, project understanding, scope, inclusions/exclusions, schedule, price, terms, 2–3 relevant past projects, signature block.
+3. Export Word (.docx) and PDF. Logo + colors in config/clients/a_pleasant_brand/.
+4. Labeled DRAFT until Andy approves.
+Done when: rough notes + a price produce a proposal PDF that reads like a real contractor wrote it.
+
+## Module E — Follow-Up & Pipeline
+1. One pipeline view combining public bids (matches) + private leads: New → Pursuing → Bid/Proposal sent → Won / Lost.
+2. Reminders in Andy's weekly email + dashboard: proposal sent 7 days ago with no answer → "Call [name]" + drafted follow-up; bid opened → pull results (BUILD_SPEC §8) and log win/loss + price gap; lost → log reason (price/schedule/relationship/unknown).
+3. Optional later: sync to GoHighLevel via API — ask me first.
+Done when: every open bid and proposal shows in one list with next action + date.
+
+## Module F — Portfolio Page (optional upsell)
+1. Collect 6–10 past projects from Andy: name, owner, year, size, type, 2–4 photos, 1–2 sentences.
+2. Build a simple static "Projects" page + a 1-page PDF Statement of Qualifications (company info, years in business, project list, bonding, insurance, references).
+3. Deploy to Netlify as a draft URL for Andy to review. Don't touch his live website without his OK.
+Done when: I have a draft projects page URL + qualifications PDF.
